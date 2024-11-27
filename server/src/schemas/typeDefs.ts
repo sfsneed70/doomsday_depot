@@ -26,6 +26,25 @@ const typeDefs = gql`
     dateCreated: String
   }
 
+  type Product {
+    _id: ID
+    name: String!
+    description: String!
+    price: Float!
+    stock: Int!
+    reviews: [Review]
+    reviewCount: Int
+    rating: Float
+  }
+
+  type Review {
+    _id: ID
+    username: String!
+    review: String!
+    rating: Int!
+    dateCreated: String
+  }
+
   type Auth {
     token: ID!
     user: User
