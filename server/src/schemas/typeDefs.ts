@@ -37,12 +37,26 @@ const typeDefs = gql`
     rating: Float
   }
 
+  input ProductInput {
+    name: String!
+    description: String!
+    price: Float!
+    stock: Int!
+  }
+
   type Review {
     _id: ID
     username: String!
     review: String!
     rating: Int!
     dateCreated: String
+  }
+
+  type BasketItem {
+    _id: ID
+    product: Product!
+    quantity: Int
+    dateAdded: String
   }
 
   type Auth {
@@ -68,6 +82,9 @@ const typeDefs = gql`
     addComment(blogId: ID!, comment: String!): Blog
     removeBlog(blogId: ID!): Blog
     editBlog(blogId: ID!, title: String!, content: String!): Blog
+    addProduct(productData: ProductInput): Product
+    addReview(productId: ID!, review: String!, rating: Int!): Product
+    addBasketItem(productId: ID!, quantity: Int!): User
   }
 `;
 

@@ -1,5 +1,7 @@
 import { Schema, model, type Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
+import type { IBasketItem } from "./BasketItem";
+import basketItemSchema from "./BasketItem.js";
 
 interface IUser extends Document {
   username: string;
@@ -8,6 +10,9 @@ interface IUser extends Document {
   isCorrectPassword(password: string): Promise<boolean>;
   blogs: Types.ObjectId[];
   blogCount: number;
+  basket: IBasketItem[];
+  basketCount: number;
+  basketTotal: number;
 }
 
 const userSchema = new Schema<IUser>(
@@ -34,6 +39,7 @@ const userSchema = new Schema<IUser>(
         ref: "Blog",
       },
     ],
+    basket: [basketItemSchema],
   },
   // set this to use virtual below
   {
@@ -61,6 +67,14 @@ userSchema.methods.isCorrectPassword = async function (
 
 userSchema.virtual("blogCount").get(function (this: IUser) {
   return this.blogs.length;
+});
+
+userSchema.virtual("basketCount").get(function (this: IUser) {
+  return this.basket.length;
+});
+
+userSchema.virtual("basketTotal").get(function (this: IUser) {
+  return this.basket.reduce((acc, item) => acc + item.quantity, 0);
 });
 
 const User = model<IUser>("User", userSchema);

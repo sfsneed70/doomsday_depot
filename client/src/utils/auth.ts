@@ -1,6 +1,8 @@
 // use this to decode a token and get the user's information out of it
 import { jwtDecode } from "jwt-decode";
 
+const token_name = "e_shop_token";
+
 interface UserToken {
   name: string;
   exp: number;
@@ -40,23 +42,24 @@ class AuthService {
 
       return false;
     } catch (err) {
+      console.log(err);
       return false;
     }
   }
 
   getToken() {
     // Retrieves the user token from localStorage
-    return localStorage.getItem("id_token");
+    return localStorage.getItem(token_name);
   }
 
   login(idToken: string) {
     // Saves user token to localStorage
-    localStorage.setItem("id_token", idToken);
+    localStorage.setItem(token_name, idToken);
   }
 
   logout() {
     // Clear user token and profile data from localStorage
-    localStorage.removeItem("id_token");
+    localStorage.removeItem(token_name);
   }
 }
 

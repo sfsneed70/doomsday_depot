@@ -103,3 +103,26 @@ export const EDIT_BLOG = gql`
     }
   }
 `;
+
+export const ADD_PRODUCT = gql`
+  mutation AddProduct($productData: ProductInput) {
+    addProduct(productData: $productData) {
+      name
+      description
+      price
+      stock
+    }
+  }
+`;
+
+export const ADD_REVIEW = gql`
+  mutation AddReview($productId: ID!, $review: String!, $rating: Int!) {
+    addReview(productId: $productId, review: $review, rating: $rating) {
+      reviews {
+        username
+        review
+        rating
+      }
+    }
+  }
+`;

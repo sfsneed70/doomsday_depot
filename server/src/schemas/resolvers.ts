@@ -1,9 +1,13 @@
 import { GraphQLError } from "graphql";
-import { User, Blog } from "../models/index.js";
+import { User, Blog, Product } from "../models/index.js";
 import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
 import type IBlogInput from "../interfaces/BlogInput";
+// import type IReviewDocument from "../interfaces/ReviewDocument";
+// import type IProductDocument from "../interfaces/ProductDocument";
+import type IProductInput from "../interfaces/ProductInput";
+
 import dayjs from "dayjs";
 
 const forbiddenException = new GraphQLError(
@@ -129,6 +133,76 @@ const resolvers = {
       }
       throw forbiddenException;
     },
+    addProduct: async (
+      _parent: any,
+      { productData }: { productData: IProductInput },
+      context: IUserContext,
+    ) => {
+      if (context.user) {
+        const product = await Product.create({
+          ...productData,
+          // username: context.user.username,
+        });
+        // const user = await User.findByIdAndUpdate(
+        //   context.user._id,
+        //   { $push: { products: product._id } },
+        //   { new: true },
+        // );
+
+        return product;
+      }
+      throw forbiddenException;
+    },
+    addReview: async (
+      _parent: any,
+      { productId, review, rating }: any,
+      context: IUserContext,
+    ) => {
+      if (context.user) {
+        const product = await Product.findByIdAndUpdate(
+          productId,
+          {
+            $push: {
+              reviews: {
+                review,
+                rating,
+                username: context.user.username,
+              },
+            },
+          },
+          { new: true },
+        );
+        return product;
+      }
+      throw forbiddenException;
+    },
+    addBasketItem: async (
+      _parent: any,
+      { productId, quantity }: any,
+      context: IUserContext,
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        const basketItem = {
+          product: product._id,
+          quantity,
+        };
+        const user = await User.findByIdAndUpdate(
+          context.user._id,
+          { $push: { basket: basketItem } },
+          { new: true },
+        );
+        return user;
+      }
+      throw forbiddenException;
+    }
   },
 };
 

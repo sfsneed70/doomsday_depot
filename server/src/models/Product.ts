@@ -1,14 +1,17 @@
 import { Schema, model, type Document, Types } from "mongoose";
-import reviewSchema, { IReview } from "./Review.js";
+import dayjs from "dayjs";
+import type { IReview } from "./Review";
+import reviewSchema from "./Review.js";
 
 interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
   stock: number;
+  dateCreated: Date | string;
   reviews: IReview[];
-  reviewCount: number;
-  rating: number;
+  // reviewCount: number;
+  // rating: number;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -29,6 +32,12 @@ const productSchema = new Schema<IProduct>(
       stock: {
         type: Number,
         required: true,
+      },
+      dateCreated: {
+        type: Date,
+        default: Date.now,
+        get: (timestamp: Date): string =>
+          dayjs(timestamp).format("MMM DD, YYYY [at] hh:mm A"),
       },
       reviews: [reviewSchema],
     },
