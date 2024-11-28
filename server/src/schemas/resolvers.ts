@@ -170,7 +170,31 @@ const resolvers = {
       context: IUserContext
     ) => {
       if (context.user) {
-        const product = await Product.findByIdAndUpdate(
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        for (const item of product.reviews) {
+          // Check if the user has already reviewed the product
+          if (item.username === context.user.username) {
+            throw new GraphQLError(
+              "You have already reviewed this product.",
+              {
+                extensions: {
+                  code: "FORBIDDEN",
+                },
+              }
+            );
+          }
+        }
+
+        // Otherwise, add the review
+        await Product.findByIdAndUpdate(
           productId,
           {
             $push: {
