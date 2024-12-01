@@ -155,6 +155,18 @@ const resolvers = {
       throw forbiddenException;
     },
 
+    removeProduct: async (
+      _parent: any,
+      { _id }: { _id: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findByIdAndDelete(_id);
+        return product;
+      }
+      throw forbiddenException;
+    },
+
     getStock: async (
       _parent: any,
       { _id }: { _id: string },
@@ -170,18 +182,6 @@ const resolvers = {
           });
         }
         return product.stock;
-      }
-      throw forbiddenException;
-    },
-
-    removeProduct: async (
-      _parent: any,
-      { _id }: { _id: string },
-      context: IUserContext
-    ) => {
-      if (context.user) {
-        const product = await Product.findByIdAndDelete(_id);
-        return product;
       }
       throw forbiddenException;
     },
