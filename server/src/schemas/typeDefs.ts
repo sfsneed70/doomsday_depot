@@ -30,6 +30,7 @@ const typeDefs = gql`
     _id: ID
     name: String!
     description: String!
+    image: String!
     price: Float!
     stock: Int!
     reviews: [Review]
@@ -40,6 +41,7 @@ const typeDefs = gql`
   input ProductInput {
     name: String!
     description: String!
+    image: String!
     price: Float!
     stock: Int!
   }
@@ -73,6 +75,10 @@ const typeDefs = gql`
     me: User
     blogs: [Blog]
     blog(blogId: ID!): Blog
+
+    // TODO
+    getStock(_id: ID!): Product
+    // TODO
   }
 
   type Mutation {
@@ -83,6 +89,13 @@ const typeDefs = gql`
     removeBlog(blogId: ID!): Blog
     editBlog(blogId: ID!, title: String!, content: String!): Blog
     addProduct(productData: ProductInput): Product
+
+    // TODO
+    removeProduct(_id: ID!): Product
+    addStock(_id: ID!, quantity: Int!): Product
+    removeStock(_id: ID!, quantity: Int!): Product
+    // TODO
+
     addReview(productId: ID!, review: String!, rating: Int!): Product
     addBasketItem(productId: ID!, quantity: Int!): User
   }

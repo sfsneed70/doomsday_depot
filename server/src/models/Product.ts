@@ -6,12 +6,11 @@ import reviewSchema from "./Review.js";
 interface IProduct extends Document {
   name: string;
   description: string;
+  image: string;
   price: number;
   stock: number;
   dateCreated: Date | string;
   reviews: IReview[];
-  // reviewCount: number;
-  // rating: number;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -22,6 +21,10 @@ const productSchema = new Schema<IProduct>(
         unique: true, // instantly creates a b-tree index on the username field for fast lookups
       },
       description: {
+        type: String,
+        required: true,
+      },
+      image: {
         type: String,
         required: true,
       },
@@ -55,7 +58,7 @@ const productSchema = new Schema<IProduct>(
 
   productSchema.virtual("rating").get(function (this: IProduct) {
     const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
-    return sum / this.reviews.length;
+    return (sum / this.reviews.length).toFixed(2);
   });
   
   const Product = model<IProduct>("Product", productSchema);

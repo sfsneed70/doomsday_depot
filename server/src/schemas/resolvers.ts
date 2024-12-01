@@ -9,6 +9,7 @@ import type IBlogInput from "../interfaces/BlogInput";
 import type IProductInput from "../interfaces/ProductInput";
 
 import dayjs from "dayjs";
+import { get } from "mongoose";
 
 const forbiddenException = new GraphQLError(
   "You are not authorized to perform this action.",
@@ -154,6 +155,87 @@ const resolvers = {
       throw forbiddenException;
     },
 
+    getStock: async (
+      _parent: any,
+      { _id }: { _id: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(_id);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        return product.stock;
+      }
+      throw forbiddenException;
+    },
+
+    removeProduct: async (
+      _parent: any,
+      { _id }: { _id: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findByIdAndDelete(_id);
+        return product;
+      }
+      throw forbiddenException;
+    },
+
+    addStock: async (
+      _parent: any,
+      { _id, quantity }: { _id: string; quantity: number },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(_id);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        product.stock += quantity;
+        await product.save();
+        return product;
+      }
+      throw forbiddenException;
+    },
+
+    removeStock: async (
+      _parent: any,
+      { _id, quantity }: { _id: string; quantity: number },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(_id);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        if (product.stock >= quantity) {
+          product.stock -= quantity;
+          await product.save();
+        } else {
+          throw new GraphQLError("Insufficient stock.", {
+            extensions: {
+              code: "BAD_REQUEST",
+            },
+          });
+        }
+        return product;
+      }
+      throw forbiddenException;
+    },
+
     addReview: async (
       _parent: any,
       {
@@ -176,14 +258,11 @@ const resolvers = {
         for (const item of product.reviews) {
           // Check if the user has already reviewed the product
           if (item.username === context.user.username) {
-            throw new GraphQLError(
-              "You have already reviewed this product.",
-              {
-                extensions: {
-                  code: "FORBIDDEN",
-                },
-              }
-            );
+            throw new GraphQLError("You have already reviewed this product.", {
+              extensions: {
+                code: "FORBIDDEN",
+              },
+            });
           }
         }
 
