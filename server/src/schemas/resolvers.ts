@@ -147,13 +147,7 @@ const resolvers = {
       if (context.user) {
         const product = await Product.create({
           ...productData,
-          // username: context.user.username,
         });
-        // const user = await User.findByIdAndUpdate(
-        //   context.user._id,
-        //   { $push: { products: product._id } },
-        //   { new: true },
-        // );
 
         return product;
       }
