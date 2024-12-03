@@ -1,4 +1,5 @@
 import type { IBlog } from "../models/Blog";
+import type { IBasketItem } from "../models/BasketItem";
 import type { Types } from "mongoose";
 
 export default interface IUserDocument {
@@ -8,4 +9,7 @@ export default interface IUserDocument {
   blogs?: Types.ObjectId[] | IBlog[] | [];
   isCorrectPassword(password: string): Promise<boolean>;
   blogCount: number | null;
+  basket: Types.ObjectId[] | IBasketItem[];
+  basketCount: number | null;
+  basketTotal: number | null;
 }

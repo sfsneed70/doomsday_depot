@@ -7,6 +7,9 @@ const typeDefs = gql`
     email: String!
     blogCount: Int
     blogs: [Blog]
+    basket: [BasketItem]
+    basketCount: Int
+    basketTotal: Float
   }
 
   type Blog {
@@ -30,11 +33,20 @@ const typeDefs = gql`
     _id: ID
     name: String!
     description: String!
+    imageUrl: String!
     price: Float!
     stock: Int!
     reviews: [Review]
     reviewCount: Int
     rating: Float
+  }
+
+  input ProductInput {
+    name: String!
+    description: String!
+    imageUrl: String!
+    price: Float!
+    stock: Int!
   }
 
   type Review {
@@ -43,6 +55,13 @@ const typeDefs = gql`
     review: String!
     rating: Int!
     dateCreated: String
+  }
+
+  type BasketItem {
+    _id: ID
+    product: Product!
+    quantity: Int
+    dateAdded: String
   }
 
   type Auth {
@@ -59,6 +78,9 @@ const typeDefs = gql`
     me: User
     blogs: [Blog]
     blog(blogId: ID!): Blog
+
+    products: [Product]
+
   }
 
   type Mutation {
@@ -68,6 +90,15 @@ const typeDefs = gql`
     addComment(blogId: ID!, comment: String!): Blog
     removeBlog(blogId: ID!): Blog
     editBlog(blogId: ID!, title: String!, content: String!): Blog
+    addProduct(productData: ProductInput): Product
+
+    removeProduct(_id: ID!): Product
+    addStock(_id: ID!, quantity: Int!): Product
+    removeStock(_id: ID!, quantity: Int!): Product
+
+    addReview(productId: ID!, review: String!, rating: Int!): Product
+    addBasketItem(productId: ID!, quantity: Int!): User
+    removeBasketItem(productId: ID!): User
   }
 `;
 

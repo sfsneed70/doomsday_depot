@@ -103,3 +103,57 @@ export const EDIT_BLOG = gql`
     }
   }
 `;
+
+export const ADD_PRODUCT = gql`
+  mutation AddProduct($productData: ProductInput) {
+    addProduct(productData: $productData) {
+      name
+      description
+      price
+      stock
+    }
+  }
+`;
+
+export const ADD_REVIEW = gql`
+  mutation AddReview($productId: ID!, $review: String!, $rating: Int!) {
+    addReview(productId: $productId, review: $review, rating: $rating) {
+      reviews {
+        username
+        review
+        rating
+      }
+    }
+  }
+`;
+
+export const ADD_TO_BASKET = gql`
+  mutation AddToBasket($productId: ID!, $quantity: Int!) {
+    addToBasket(productId: $productId, quantity: $quantity) {
+      _id
+      product {
+        name
+        description
+        price
+        stock
+      }
+      quantity
+    }
+  }
+`;
+
+export const REMOVE_FROM_BASKET = gql`
+  mutation RemoveFromBasket($productId: ID!) {
+    removeFromBasket(productId: $productId) {
+      _id
+      product {
+        name
+        description
+        price
+        stock
+      }
+      quantity
+    }
+  }
+`;
+

@@ -1,14 +1,16 @@
 import { Schema, model, type Document, Types } from "mongoose";
-import reviewSchema, { IReview } from "./Review.js";
+import dayjs from "dayjs";
+import type { IReview } from "./Review";
+import reviewSchema from "./Review.js";
 
-interface IProduct extends Document {
+export interface IProduct extends Document {
   name: string;
   description: string;
+  imageUrl: string;
   price: number;
   stock: number;
+  dateCreated: Date | string;
   reviews: IReview[];
-  reviewCount: number;
-  rating: number;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -22,6 +24,10 @@ const productSchema = new Schema<IProduct>(
         type: String,
         required: true,
       },
+      imageUrl: {
+        type: String,
+        required: true,
+      },
       price: {
         type: Number,
         required: true,
@@ -29,6 +35,12 @@ const productSchema = new Schema<IProduct>(
       stock: {
         type: Number,
         required: true,
+      },
+      dateCreated: {
+        type: Date,
+        default: Date.now,
+        get: (timestamp: Date): string =>
+          dayjs(timestamp).format("MMM DD, YYYY [at] hh:mm A"),
       },
       reviews: [reviewSchema],
     },
@@ -45,8 +57,9 @@ const productSchema = new Schema<IProduct>(
   });
 
   productSchema.virtual("rating").get(function (this: IProduct) {
+    if (this.reviews.length === 0) return 0;
     const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
-    return sum / this.reviews.length;
+    return (sum / this.reviews.length).toFixed(2);
   });
   
   const Product = model<IProduct>("Product", productSchema);
