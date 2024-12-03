@@ -74,12 +74,28 @@ const typeDefs = gql`
     content: String!
   }
 
+  type Category {
+    _id: ID
+    name: String!
+    imageUrl: String!
+    products: [Product]
+    productCount: Int
+  }
+
+  input CategoryInput {
+    name: String!
+    imageUrl: String!
+  }
+
   type Query {
     me: User
     blogs: [Blog]
     blog(blogId: ID!): Blog
 
+    product(productId: ID!): Product
     products: [Product]
+    category(categoryId: ID!): Category
+    categories: [Category]
 
   }
 
@@ -90,11 +106,15 @@ const typeDefs = gql`
     addComment(blogId: ID!, comment: String!): Blog
     removeBlog(blogId: ID!): Blog
     editBlog(blogId: ID!, title: String!, content: String!): Blog
-    addProduct(productData: ProductInput): Product
 
-    removeProduct(_id: ID!): Product
-    addStock(_id: ID!, quantity: Int!): Product
-    removeStock(_id: ID!, quantity: Int!): Product
+    addProduct(productData: ProductInput): Product
+    removeProduct(productId: ID!): Product
+    addStock(productId: ID!, quantity: Int!): Product
+    removeStock(productId: ID!, quantity: Int!): Product
+
+    addCategory(categoryData: CategoryInput): Category
+    removeCategory(categoryId: ID!): Category
+    addProductToCategory(productId: ID!, categoryId: ID!): Category
 
     addReview(productId: ID!, review: String!, rating: Int!): Product
     addBasketItem(productId: ID!, quantity: Int!): User
