@@ -126,23 +126,6 @@ export const GET_CATEGORIES = gql`
       _id
       name
       imageUrl
-      products {
-        _id
-        name
-        description
-        imageUrl
-        price
-        stock
-        reviews {
-          _id
-          username
-          review
-          rating
-          dateCreated
-        }
-        reviewCount
-        rating
-      }
     }
   }
 `;
