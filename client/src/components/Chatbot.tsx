@@ -1,6 +1,6 @@
-import { useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
-import '../utils/Chatbot.css'; // Import the CSS file for styling
+import './Chatbot.css'; // Import the CSS file for styling
 
 interface Message {
     sender: 'user' | 'ai';
@@ -11,6 +11,13 @@ const Chatbot = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState<string>('');
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    useEffect(() => {
+        const initialMessage: Message = {
+            sender: 'ai',
+            text: 'Welcome to the Apocalyptic Store! How can I assist you today?'
+        };
+        setMessages([initialMessage]);
+    }, []);
 
     const sendMessage = async () => {
         if (input.trim() === '') return;
