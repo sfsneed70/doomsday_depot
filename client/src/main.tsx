@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 // import Edit from "./pages/Edit";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ShopDisplay from "./pages/ShopDisplay.js";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +45,11 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />
-      }
+      },
+      {
+        path: "/shop",
+        element: <ShopDisplay />,
+      },
     ],
   },
 ]);
