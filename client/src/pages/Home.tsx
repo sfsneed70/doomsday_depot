@@ -1,14 +1,7 @@
+import { useQuery } from "@apollo/client";
+import { GET_CATEGORIES } from "../utils/queries";
 import CategoryItem from "../components/CategoryItem";
 import DealCarousel from "../components/DealCarousel";
-
-const categories = [
-  { href: "/tools", name: "Tools", imageUrl: "/tools.jpg" },
-  { href: "/shelters", name: "Shelters", imageUrl: "/shelter.jpg" },
-  { href: "/cooking", name: "Cooking", imageUrl: "/cooking.jpg" },
-  { href: "/clothes", name: "Clothes", imageUrl: "/clothes.jpg" },
-  { href: "/power", name: "Power Supply", imageUrl: "/powersupply.jpg" },
-  { href: "/firstaid", name: "First Aid", imageUrl: "/firstaid.jpg" },
-] // update these frontpage category pictures, these are just placeholders
 
 const deals = [
   { id: 1, name: "1", price: 25.99, rating: 4, ratingCount: 1000, imageUrl: "/tools.jpg" },
@@ -23,9 +16,16 @@ const deals = [
 ];
 
 const Home = () => {
+  // Fetch categories using the Apollo Client query
+  const { loading, error, data } = useQuery(GET_CATEGORIES);
+
+  if (loading) return <div>Loading categories...</div>;
+  if (error) return <div>Error fetching categories: {error.message}</div>;
+
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        
         {/* Categories Section */}
         <h1 className="text-center text 5xl sm:text-6xl font-bold text-emerald-400 mb-4">
           Categories
@@ -34,10 +34,10 @@ const Home = () => {
           Apocalypse tagline
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map(category => (
+          {data.categories.map((category: { _id: string, name: string, imageUrl: string }) => (
             <CategoryItem
               category={category}
-              key={category.name}
+              key={category._id}
             />
           ))}
         </div>
