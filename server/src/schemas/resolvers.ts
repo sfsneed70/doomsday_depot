@@ -3,12 +3,7 @@ import { User, Product, Category } from "../models/index.js";
 import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
-// import type IBlogInput from "../interfaces/BlogInput";
 import type IProductInput from "../interfaces/ProductInput";
-// import type ICategoryInput from "../interfaces/CategoryInput";
-
-// import dayjs from "dayjs";
-// import { get } from "mongoose";
 
 const forbiddenException = new GraphQLError(
   "You are not authorized to perform this action.",
@@ -28,14 +23,6 @@ const resolvers = {
       }
       throw forbiddenException;
     },
-
-    // blogs: async () => {
-    //   return Blog.find().sort({ dateCreated: -1 });
-    // },
-
-    // blog: async (_parent: any, { blogId }: { blogId: string }) => {
-    //   return Blog.findById(blogId).populate("comments");
-    // },
 
     product: async (_parent: any, { productId }: { productId: string }) => {
       return Product.findById(productId).populate("reviews");
@@ -82,78 +69,6 @@ const resolvers = {
       const token = signToken(user.username, user.email, user._id);
       return { token, user: user as IUserDocument };
     },
-
-    // addBlog: async (
-    //   _parent: any,
-    //   { blogData }: { blogData: IBlogInput },
-    //   context: IUserContext
-    // ) => {
-    //   if (context.user) {
-    //     const blog = await Blog.create({
-    //       ...blogData,
-    //       username: context.user.username,
-    //     });
-    //     const user = await User.findByIdAndUpdate(
-    //       context.user._id,
-    //       { $push: { blogs: blog._id } },
-    //       { new: true }
-    //     );
-
-    //     return blog;
-    //   }
-    //   throw forbiddenException;
-    // },
-
-    // addComment: async (
-    //   _parent: any,
-    //   { blogId, comment }: { blogId: string; comment: string },
-    //   context: IUserContext
-    // ) => {
-    //   if (context.user) {
-    //     const blog = await Blog.findByIdAndUpdate(
-    //       blogId,
-    //       { $push: { comments: { comment, username: context.user.username } } },
-    //       { new: true }
-    //     );
-    //     return blog;
-    //   }
-    //   throw forbiddenException;
-    // },
-
-    // removeBlog: async (
-    //   _parent: any,
-    //   { blogId }: { blogId: string },
-    //   context: IUserContext
-    // ) => {
-    //   if (context.user) {
-    //     const blog = await Blog.findByIdAndDelete(blogId);
-    //     await User.findByIdAndUpdate(context.user._id, {
-    //       $pull: { blogs: blogId },
-    //     });
-    //     return blog;
-    //   }
-    //   throw forbiddenException;
-    // },
-
-    // editBlog: async (
-    //   _parent: any,
-    //   {
-    //     blogId,
-    //     title,
-    //     content,
-    //   }: { blogId: string; title: string; content: string },
-    //   context: IUserContext
-    // ) => {
-    //   if (context.user) {
-    //     const blog = await Blog.findByIdAndUpdate(
-    //       blogId,
-    //       { title, content },
-    //       { new: true }
-    //     );
-    //     return blog;
-    //   }
-    //   throw forbiddenException;
-    // },
 
     addProduct: async (
       _parent: any,
