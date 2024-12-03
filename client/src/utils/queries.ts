@@ -76,6 +76,28 @@ export const GET_BLOG = gql`
   }
 `;
 
+export const GET_PRODUCT = gql`
+  query Product($productId: ID!) {
+    product(productId: $productId) {
+      _id
+      name
+      description
+      imageUrl
+      price
+      stock
+      reviews {
+        _id
+        username
+        review
+        rating
+        dateCreated
+      }
+      reviewCount
+      rating
+    }
+  }
+`;
+
 export const GET_PRODUCTS = gql`
   query Products {
     products {
@@ -94,6 +116,60 @@ export const GET_PRODUCTS = gql`
       }
       reviewCount
       rating
+    }
+  }
+`;
+
+export const GET_CATEGORIES = gql`
+  query Categories {
+    categories {
+      _id
+      name
+      imageUrl
+      products {
+        _id
+        name
+        description
+        imageUrl
+        price
+        stock
+        reviews {
+          _id
+          username
+          review
+          rating
+          dateCreated
+        }
+        reviewCount
+        rating
+      }
+    }
+  }
+`;
+
+export const GET_CATEGORY = gql`
+  query Category($categoryId: ID!) {
+    category(categoryId: $categoryId) {
+      _id
+      name
+      imageUrl
+      products {
+        _id
+        name
+        description
+        imageUrl
+        price
+        stock
+        reviews {
+          _id
+          username
+          review
+          rating
+          dateCreated
+        }
+        reviewCount
+        rating
+      }
     }
   }
 `;
