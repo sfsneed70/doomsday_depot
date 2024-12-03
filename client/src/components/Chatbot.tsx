@@ -76,10 +76,11 @@ const Chatbot = () => {
                         type="text"
                         value={input}
                         onChange={handleInputChange}
+                        className="text-white bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                         onKeyPress={handleKeyPress}
                         placeholder="Type a message..."
                     />
-                    <button onClick={sendMessage}>Send</button>
+                    <button className="text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-150 ease-in-out disabled:opacity-50" onClick={sendMessage}>Send</button>
                 </div>
             )}
         </div>
