@@ -21,6 +21,7 @@
     "concurrently": "^8.2.2"
   },
   "devDependencies": {
+    "ts-node": "^10.9.2",
     "wait-on": "^7.2.0"
   }
 }

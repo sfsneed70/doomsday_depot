@@ -62,3 +62,14 @@ export const GET_BLOG = gql`
     }
   }
 `;
+
+export const GET_PRODUCTS = gql`
+  query GetProducts {
+    products {
+      name
+      description
+      price
+      stock
+    }
+  }
+`;
