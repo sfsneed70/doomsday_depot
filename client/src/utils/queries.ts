@@ -20,6 +20,19 @@ export const GET_ME = gql`
           dateCreated
         }
         commentCount
+        basket {
+          product {
+            _id
+            name
+            description
+            imageUrl
+            price
+            stock
+          }
+          quantity
+        }
+        basketCount
+        basketTotal
       }
     }
   }
@@ -64,12 +77,23 @@ export const GET_BLOG = gql`
 `;
 
 export const GET_PRODUCTS = gql`
-  query GetProducts {
+  query Products {
     products {
+      _id
       name
       description
+      imageUrl
       price
       stock
+      reviews {
+        _id
+        username
+        review
+        rating
+        dateCreated
+      }
+      reviewCount
+      rating
     }
   }
 `;
