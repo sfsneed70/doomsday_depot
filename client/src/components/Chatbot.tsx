@@ -9,7 +9,7 @@ interface Message {
 
 const Chatbot = () => {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState<string>('');
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const sendMessage = async () => {
@@ -20,12 +20,19 @@ const Chatbot = () => {
 
         try {
             console.log('Sending message:', input); // Debugging statement
-            const response = await axios.post<{ message: string }>('/api/chat', { message: input });
+            const response = await axios.post<{ message: string }>('http://localhost:3001/api/chat', { message: input }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             console.log('Server response:', response.data.message); // Debugging statement
             const aiMessage: Message = { sender: 'ai', text: response.data.message };
             setMessages([...messages, newMessage, aiMessage]);
         } catch (error) {
             console.error('Error communicating with AI:', error);
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error details:', error.response?.data);
+            }
         }
 
         setInput('');
@@ -48,7 +55,6 @@ const Chatbot = () => {
     return (
         <div className="chatbot-container">
             <div className={`chatbot-icon ${isOpen ? 'open' : ''}`} onClick={toggleChatWindow}>
-                {/* The background image is set in the CSS */}
             </div>
             {isOpen && (
                 <div className="chat-window">
