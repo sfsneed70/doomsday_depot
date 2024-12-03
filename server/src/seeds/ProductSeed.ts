@@ -170,7 +170,7 @@ const productData = {
 
 const seedDatabase = async () => {
   try {
-    // Get MongoDB URI from .env
+    // Get MongoDB URI from .env or locally
     const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/e_shop_db";
     if (!mongoUri) {
       throw new Error("MONGODB_URI is not defined in .env");
