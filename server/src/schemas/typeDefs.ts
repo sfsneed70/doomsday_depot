@@ -7,6 +7,9 @@ const typeDefs = gql`
     email: String!
     blogCount: Int
     blogs: [Blog]
+    basket: [BasketItem]
+    basketCount: Int
+    basketTotal: Float
   }
 
   type Blog {
@@ -76,9 +79,8 @@ const typeDefs = gql`
     blogs: [Blog]
     blog(blogId: ID!): Blog
 
-    // TODO
-    getStock(_id: ID!): Product
-    // TODO
+    products: [Product]
+
   }
 
   type Mutation {
@@ -90,14 +92,13 @@ const typeDefs = gql`
     editBlog(blogId: ID!, title: String!, content: String!): Blog
     addProduct(productData: ProductInput): Product
 
-    // TODO
     removeProduct(_id: ID!): Product
     addStock(_id: ID!, quantity: Int!): Product
     removeStock(_id: ID!, quantity: Int!): Product
-    // TODO
 
     addReview(productId: ID!, review: String!, rating: Int!): Product
     addBasketItem(productId: ID!, quantity: Int!): User
+    removeBasketItem(productId: ID!): User
   }
 `;
 

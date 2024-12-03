@@ -24,18 +24,22 @@ const resolvers = {
   Query: {
     me: async (_parent: any, _args: any, context: IUserContext) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate("blogs");
-        console.log(user);
-
+        const user = await User.findById(context.user._id).populate("blogs").populate("basket.product");
         return user;
       }
       throw forbiddenException;
     },
+
     blogs: async () => {
       return Blog.find().sort({ dateCreated: -1 });
     },
+
     blog: async (_parent: any, { blogId }: { blogId: string }) => {
       return Blog.findById(blogId).populate("comments");
+    },
+
+    products: async () => {
+      return Product.find({}).sort({ name: 1 });
     },
   },
 
@@ -163,25 +167,6 @@ const resolvers = {
       if (context.user) {
         const product = await Product.findByIdAndDelete(_id);
         return product;
-      }
-      throw forbiddenException;
-    },
-
-    getStock: async (
-      _parent: any,
-      { _id }: { _id: string },
-      context: IUserContext
-    ) => {
-      if (context.user) {
-        const product = await Product.findById(_id);
-        if (!product) {
-          throw new GraphQLError("Product not found.", {
-            extensions: {
-              code: "NOT_FOUND",
-            },
-          });
-        }
-        return product.stock;
       }
       throw forbiddenException;
     },
@@ -321,6 +306,38 @@ const resolvers = {
             { $push: { basket: basketItem } },
             { new: true }
           );
+        }
+        return user;
+      }
+      throw forbiddenException;
+    },
+
+    removeBasketItem: async (
+      _parent: any,
+      { productId }: { productId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        const user = await User.findById(context.user._id);
+        if (user) {
+          // If the user already has the product in their basket, remove it
+          for (const item of user.basket) {
+            if (item.product.toString() === productId) {
+              await User.findByIdAndUpdate(context.user._id, {
+                $pull: { basket: { product: productId } },
+              });
+              return user;
+            }
+          }
         }
         return user;
       }

@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import type { IReview } from "./Review";
 import reviewSchema from "./Review.js";
 
-interface IProduct extends Document {
+export interface IProduct extends Document {
   name: string;
   description: string;
   image: string;
@@ -57,6 +57,7 @@ const productSchema = new Schema<IProduct>(
   });
 
   productSchema.virtual("rating").get(function (this: IProduct) {
+    if (this.reviews.length === 0) return 0;
     const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
     return (sum / this.reviews.length).toFixed(2);
   });

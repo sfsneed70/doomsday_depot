@@ -126,3 +126,34 @@ export const ADD_REVIEW = gql`
     }
   }
 `;
+
+export const ADD_TO_BASKET = gql`
+  mutation AddToBasket($productId: ID!, $quantity: Int!) {
+    addToBasket(productId: $productId, quantity: $quantity) {
+      _id
+      product {
+        name
+        description
+        price
+        stock
+      }
+      quantity
+    }
+  }
+`;
+
+export const REMOVE_FROM_BASKET = gql`
+  mutation RemoveFromBasket($productId: ID!) {
+    removeFromBasket(productId: $productId) {
+      _id
+      product {
+        name
+        description
+        price
+        stock
+      }
+      quantity
+    }
+  }
+`;
+

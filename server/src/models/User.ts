@@ -2,6 +2,8 @@ import { Schema, model, type Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import type { IBasketItem } from "./BasketItem";
 import basketItemSchema from "./BasketItem.js";
+import type { IProduct } from "./Product";
+import ts from "typescript";
 
 interface IUser extends Document {
   username: string;
@@ -74,7 +76,12 @@ userSchema.virtual("basketCount").get(function (this: IUser) {
 });
 
 userSchema.virtual("basketTotal").get(function (this: IUser) {
-  return this.basket.reduce((acc, item) => acc + item.quantity, 0);
+  let total = 0;
+  for (const item of this.basket) {
+    // @ts-ignore
+    total += item.quantity * item.product.price;
+  }
+  return total.toFixed(2);
 });
 
 const User = model<IUser>("User", userSchema);
