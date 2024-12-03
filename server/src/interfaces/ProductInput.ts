@@ -1,7 +1,7 @@
 export default interface IProductDocument {
   name: string;
   description: string;
-  image: string;
+  imageUrl: string;
   price: number;
   stock: number;
 }

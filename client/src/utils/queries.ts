@@ -25,7 +25,7 @@ export const GET_ME = gql`
             _id
             name
             description
-            image
+            imageUrl
             price
             stock
           }
@@ -82,7 +82,7 @@ export const GET_PRODUCTS = gql`
       _id
       name
       description
-      image
+      imageUrl
       price
       stock
       reviews {

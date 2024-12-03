@@ -4,7 +4,7 @@ export interface IProduct {
   _id: string;
   name: string;
   description: string;
-  image: string;
+  imageUrl: string;
   price: number;
   stock: number;
   reviews: IReview[] | null | [];

@@ -6,7 +6,7 @@ import reviewSchema from "./Review.js";
 export interface IProduct extends Document {
   name: string;
   description: string;
-  image: string;
+  imageUrl: string;
   price: number;
   stock: number;
   dateCreated: Date | string;
@@ -24,7 +24,7 @@ const productSchema = new Schema<IProduct>(
         type: String,
         required: true,
       },
-      image: {
+      imageUrl: {
         type: String,
         required: true,
       },

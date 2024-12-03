@@ -33,7 +33,7 @@ const typeDefs = gql`
     _id: ID
     name: String!
     description: String!
-    image: String!
+    imageUrl: String!
     price: Float!
     stock: Int!
     reviews: [Review]
@@ -44,7 +44,7 @@ const typeDefs = gql`
   input ProductInput {
     name: String!
     description: String!
-    image: String!
+    imageUrl: String!
     price: Float!
     stock: Int!
   }
