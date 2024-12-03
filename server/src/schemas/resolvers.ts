@@ -1,15 +1,14 @@
 import { GraphQLError } from "graphql";
-import { User, Blog, Product } from "../models/index.js";
+import { User, Blog, Product, Category } from "../models/index.js";
 import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
 import type IBlogInput from "../interfaces/BlogInput";
-// import type IReviewDocument from "../interfaces/ReviewDocument";
-// import type IProductDocument from "../interfaces/ProductDocument";
 import type IProductInput from "../interfaces/ProductInput";
+// import type ICategoryInput from "../interfaces/CategoryInput";
 
-import dayjs from "dayjs";
-import { get } from "mongoose";
+// import dayjs from "dayjs";
+// import { get } from "mongoose";
 
 const forbiddenException = new GraphQLError(
   "You are not authorized to perform this action.",
@@ -38,8 +37,20 @@ const resolvers = {
       return Blog.findById(blogId).populate("comments");
     },
 
+    product: async (_parent: any, { productId }: { productId: string }) => {
+      return Product.findById(productId).populate("reviews");
+    },
+
     products: async () => {
       return Product.find({}).sort({ name: 1 });
+    },
+
+    category: async (_parent: any, { categoryId }: { categoryId: string }) => {
+      return Category.findById(categoryId).populate("products");
+    },
+
+    categories: async () => {
+      return Category.find().sort({ name: 1 });
     },
   },
 
@@ -161,11 +172,11 @@ const resolvers = {
 
     removeProduct: async (
       _parent: any,
-      { _id }: { _id: string },
+      { productId }: { productId: string },
       context: IUserContext
     ) => {
       if (context.user) {
-        const product = await Product.findByIdAndDelete(_id);
+        const product = await Product.findByIdAndDelete(productId);
         return product;
       }
       throw forbiddenException;
@@ -173,11 +184,11 @@ const resolvers = {
 
     addStock: async (
       _parent: any,
-      { _id, quantity }: { _id: string; quantity: number },
+      { productId, quantity }: { productId: string; quantity: number },
       context: IUserContext
     ) => {
       if (context.user) {
-        const product = await Product.findById(_id);
+        const product = await Product.findById(productId);
         if (!product) {
           throw new GraphQLError("Product not found.", {
             extensions: {
@@ -194,11 +205,11 @@ const resolvers = {
 
     removeStock: async (
       _parent: any,
-      { _id, quantity }: { _id: string; quantity: number },
+      { productId, quantity }: { productId: string; quantity: number },
       context: IUserContext
     ) => {
       if (context.user) {
-        const product = await Product.findById(_id);
+        const product = await Product.findById(productId);
         if (!product) {
           throw new GraphQLError("Product not found.", {
             extensions: {
@@ -217,6 +228,64 @@ const resolvers = {
           });
         }
         return product;
+      }
+      throw forbiddenException;
+    },
+
+    addCategory: async (
+      _parent: any,
+      { categoryData }: { categoryData: { name: string; imageUrl: string } },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const category = await Category.create(categoryData);
+        return category;
+      }
+      throw forbiddenException;
+    },
+
+    removeCategory: async (
+      _parent: any,
+      { categoryId }: { categoryId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const category = await Category.findByIdAndDelete(categoryId);
+        return category;
+      }
+      throw forbiddenException;
+    },
+
+    addProductToCategory: async (
+      _parent: any,
+      { productId, categoryId }: { productId: string; categoryId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const category = await Category.findById(categoryId);
+        if (!category) {
+          throw new GraphQLError("Category not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        await Category.findByIdAndUpdate(
+          categoryId,
+          { $push: { products: productId } },
+          { new: true }
+        );
+        return category;
       }
       throw forbiddenException;
     },

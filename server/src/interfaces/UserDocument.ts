@@ -9,7 +9,7 @@ export default interface IUserDocument {
   blogs?: Types.ObjectId[] | IBlog[] | [];
   isCorrectPassword(password: string): Promise<boolean>;
   blogCount: number | null;
-  basket: Types.ObjectId[] | IBasketItem[];
+  basket: IBasketItem[];
   basketCount: number | null;
   basketTotal: number | null;
 }
