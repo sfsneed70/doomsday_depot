@@ -5,29 +5,29 @@ const typeDefs = gql`
     _id: ID
     username: String!
     email: String!
-    blogCount: Int
-    blogs: [Blog]
+    # blogCount: Int
+    # blogs: [Blog]
     basket: [BasketItem]
     basketCount: Int
     basketTotal: Float
   }
 
-  type Blog {
-    _id: ID
-    username: String!
-    title: String!
-    content: String!
-    dateCreated: String
-    comments: [Comment]
-    commentCount: Int
-  }
+  # type Blog {
+  #   _id: ID
+  #   username: String!
+  #   title: String!
+  #   content: String!
+  #   dateCreated: String
+  #   comments: [Comment]
+  #   commentCount: Int
+  # }
 
-  type Comment {
-    _id: ID
-    username: String!
-    comment: String!
-    dateCreated: String
-  }
+  # type Comment {
+  #   _id: ID
+  #   username: String!
+  #   comment: String!
+  #   dateCreated: String
+  # }
 
   type Product {
     _id: ID
@@ -89,8 +89,8 @@ const typeDefs = gql`
 
   type Query {
     me: User
-    blogs: [Blog]
-    blog(blogId: ID!): Blog
+    # blogs: [Blog]
+    # blog(blogId: ID!): Blog
 
     product(productId: ID!): Product
     products: [Product]
@@ -102,10 +102,10 @@ const typeDefs = gql`
   type Mutation {
     addUser(username: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
-    addBlog(blogData: BlogInput): Blog
-    addComment(blogId: ID!, comment: String!): Blog
-    removeBlog(blogId: ID!): Blog
-    editBlog(blogId: ID!, title: String!, content: String!): Blog
+    # addBlog(blogData: BlogInput): Blog
+    # addComment(blogId: ID!, comment: String!): Blog
+    # removeBlog(blogId: ID!): Blog
+    # editBlog(blogId: ID!, title: String!, content: String!): Blog
 
     addProduct(productData: ProductInput): Product
     removeProduct(productId: ID!): Product
@@ -117,6 +117,7 @@ const typeDefs = gql`
     addProductToCategory(productId: ID!, categoryId: ID!): Category
 
     addReview(productId: ID!, review: String!, rating: Int!): Product
+    editReview(productId: ID!, review: String!, rating: Int!): Product
     addBasketItem(productId: ID!, quantity: Int!): User
     removeBasketItem(productId: ID!): User
   }

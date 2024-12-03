@@ -1,9 +1,9 @@
 import { GraphQLError } from "graphql";
-import { User, Blog, Product, Category } from "../models/index.js";
+import { User, Product, Category } from "../models/index.js";
 import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
-import type IBlogInput from "../interfaces/BlogInput";
+// import type IBlogInput from "../interfaces/BlogInput";
 import type IProductInput from "../interfaces/ProductInput";
 // import type ICategoryInput from "../interfaces/CategoryInput";
 
@@ -29,13 +29,13 @@ const resolvers = {
       throw forbiddenException;
     },
 
-    blogs: async () => {
-      return Blog.find().sort({ dateCreated: -1 });
-    },
+    // blogs: async () => {
+    //   return Blog.find().sort({ dateCreated: -1 });
+    // },
 
-    blog: async (_parent: any, { blogId }: { blogId: string }) => {
-      return Blog.findById(blogId).populate("comments");
-    },
+    // blog: async (_parent: any, { blogId }: { blogId: string }) => {
+    //   return Blog.findById(blogId).populate("comments");
+    // },
 
     product: async (_parent: any, { productId }: { productId: string }) => {
       return Product.findById(productId).populate("reviews");
@@ -83,77 +83,77 @@ const resolvers = {
       return { token, user: user as IUserDocument };
     },
 
-    addBlog: async (
-      _parent: any,
-      { blogData }: { blogData: IBlogInput },
-      context: IUserContext
-    ) => {
-      if (context.user) {
-        const blog = await Blog.create({
-          ...blogData,
-          username: context.user.username,
-        });
-        const user = await User.findByIdAndUpdate(
-          context.user._id,
-          { $push: { blogs: blog._id } },
-          { new: true }
-        );
+    // addBlog: async (
+    //   _parent: any,
+    //   { blogData }: { blogData: IBlogInput },
+    //   context: IUserContext
+    // ) => {
+    //   if (context.user) {
+    //     const blog = await Blog.create({
+    //       ...blogData,
+    //       username: context.user.username,
+    //     });
+    //     const user = await User.findByIdAndUpdate(
+    //       context.user._id,
+    //       { $push: { blogs: blog._id } },
+    //       { new: true }
+    //     );
 
-        return blog;
-      }
-      throw forbiddenException;
-    },
+    //     return blog;
+    //   }
+    //   throw forbiddenException;
+    // },
 
-    addComment: async (
-      _parent: any,
-      { blogId, comment }: { blogId: string; comment: string },
-      context: IUserContext
-    ) => {
-      if (context.user) {
-        const blog = await Blog.findByIdAndUpdate(
-          blogId,
-          { $push: { comments: { comment, username: context.user.username } } },
-          { new: true }
-        );
-        return blog;
-      }
-      throw forbiddenException;
-    },
+    // addComment: async (
+    //   _parent: any,
+    //   { blogId, comment }: { blogId: string; comment: string },
+    //   context: IUserContext
+    // ) => {
+    //   if (context.user) {
+    //     const blog = await Blog.findByIdAndUpdate(
+    //       blogId,
+    //       { $push: { comments: { comment, username: context.user.username } } },
+    //       { new: true }
+    //     );
+    //     return blog;
+    //   }
+    //   throw forbiddenException;
+    // },
 
-    removeBlog: async (
-      _parent: any,
-      { blogId }: { blogId: string },
-      context: IUserContext
-    ) => {
-      if (context.user) {
-        const blog = await Blog.findByIdAndDelete(blogId);
-        await User.findByIdAndUpdate(context.user._id, {
-          $pull: { blogs: blogId },
-        });
-        return blog;
-      }
-      throw forbiddenException;
-    },
+    // removeBlog: async (
+    //   _parent: any,
+    //   { blogId }: { blogId: string },
+    //   context: IUserContext
+    // ) => {
+    //   if (context.user) {
+    //     const blog = await Blog.findByIdAndDelete(blogId);
+    //     await User.findByIdAndUpdate(context.user._id, {
+    //       $pull: { blogs: blogId },
+    //     });
+    //     return blog;
+    //   }
+    //   throw forbiddenException;
+    // },
 
-    editBlog: async (
-      _parent: any,
-      {
-        blogId,
-        title,
-        content,
-      }: { blogId: string; title: string; content: string },
-      context: IUserContext
-    ) => {
-      if (context.user) {
-        const blog = await Blog.findByIdAndUpdate(
-          blogId,
-          { title, content },
-          { new: true }
-        );
-        return blog;
-      }
-      throw forbiddenException;
-    },
+    // editBlog: async (
+    //   _parent: any,
+    //   {
+    //     blogId,
+    //     title,
+    //     content,
+    //   }: { blogId: string; title: string; content: string },
+    //   context: IUserContext
+    // ) => {
+    //   if (context.user) {
+    //     const blog = await Blog.findByIdAndUpdate(
+    //       blogId,
+    //       { title, content },
+    //       { new: true }
+    //     );
+    //     return blog;
+    //   }
+    //   throw forbiddenException;
+    // },
 
     addProduct: async (
       _parent: any,
@@ -335,6 +335,42 @@ const resolvers = {
           { new: true }
         );
         return product;
+      }
+      throw forbiddenException;
+    },
+
+    editReview: async (
+      _parent: any,
+      {
+        productId,
+        review,
+        rating,
+      }: {
+        productId: string;
+        review: string;
+        rating: number;
+      },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        for (const item of product.reviews) {
+          // Find the review by the user and update it
+          if (item.username === context.user.username) {
+            item.review = review;
+            item.rating = rating;
+            await product.save();
+            return product;
+          }
+        }
       }
       throw forbiddenException;
     },
