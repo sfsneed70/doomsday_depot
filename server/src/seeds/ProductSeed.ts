@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+
+// Load environment variables
+dotenv.config();
 
 const productData = {
   tools: [
@@ -166,8 +170,15 @@ const productData = {
 
 const seedDatabase = async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/e_shop_db", {
+    // Get MongoDB URI from .env or locally
+    const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/e_shop_db";
+    if (!mongoUri) {
+      throw new Error("MONGODB_URI is not defined in .env");
+    }
 
+    // Connect to MongoDB
+    await mongoose.connect(mongoUri, {
+      
     });
     console.log("Connected to MongoDB");
 
@@ -180,9 +191,9 @@ const seedDatabase = async () => {
     for (const [categoryKey, products] of Object.entries(productData)) {
       const productDocs = await Product.insertMany(products);
       const category = new Category({
-        name: categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1), // Capitalize category name
+        name: categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1), 
         imageUrl: `/${categoryKey}.jpg`,
-        products: productDocs.map((product) => product._id), // Link product IDs
+        products: productDocs.map((product) => product._id), 
       });
       await category.save();
     }
@@ -196,5 +207,3 @@ const seedDatabase = async () => {
 };
 
 seedDatabase();
-
-
