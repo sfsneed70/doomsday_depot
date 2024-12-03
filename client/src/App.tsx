@@ -12,6 +12,8 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "./components/NavBar";
 import Auth from "./utils/auth";
 
+import Chatbot from "./components/Chatbot";
+
 // Construct our main GraphQL API endpoint
 const httpLink = createHttpLink({
   uri: "/graphql",
@@ -53,6 +55,7 @@ function App() {
 
         <div className='relative z-50 pt-20'>
           <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+          <Chatbot />
           <div >
             <Outlet context={[loggedIn, setLoggedIn] satisfies AuthContextType} />
           </div>

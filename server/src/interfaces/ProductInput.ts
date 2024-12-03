@@ -1,4 +1,4 @@
-export default interface IProductDocument {
+export default interface IProductInput {
   name: string;
   description: string;
   imageUrl: string;

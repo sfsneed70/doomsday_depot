@@ -1,72 +1,149 @@
-// // import { Form, Button } from "react-bootstrap";
-// import { useMutation } from "@apollo/client";
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { ADD_USER } from "../utils/mutations";
-// import Auth from "../utils/auth";
-// import { useLoggedIn } from "../App";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { ADD_USER } from "../utils/mutations";
+import Auth from "../utils/auth";
+import validator from "validator";
+import { useNavigate } from "react-router-dom";
 
-// const RegisterForm = () => {
-//   const [_loggedIn, setLoggedIn] = useLoggedIn();
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     username: "",
-//     password: "",
-//   });
-//   const [addUser, { error }] = useMutation(ADD_USER);
-//   const navigate = useNavigate();
+interface RegisterFormProps {
+    onSuccess: () => void;
+}
 
-//   const handleFormSubmit = async (event: React.FormEvent) => {
-//     event.preventDefault();
-//     try {
-//       const { data } = await addUser({ variables: { ...formData } });
-//       Auth.login(data.addUser.token);
-//       setLoggedIn(true);
-//       navigate("/");
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   };
-//   return (
-//     <Form onSubmit={handleFormSubmit}>
-//       <Form.Group>
-//         <Form.Label>Username</Form.Label>
-//         <Form.Control
-//           value={formData.username}
-//           as="input"
-//           name="username"
-//           onChange={(e) =>
-//             setFormData({ ...formData, username: e.target.value })
-//           }
-//         />
-//       </Form.Group>
-//       <Form.Group>
-//         <Form.Label>Email</Form.Label>
-//         <Form.Control
-//           value={formData.email}
-//           as="input"
-//           name="email"
-//           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-//         />
-//       </Form.Group>
-//       <Form.Group>
-//         <Form.Label>Password</Form.Label>
-//         <Form.Control
-//           value={formData.password}
-//           as="input"
-//           name="password"
-//           type="password"
-//           onChange={(e) =>
-//             setFormData({ ...formData, password: e.target.value })
-//           }
-//         />
-//       </Form.Group>
-//       <Button variant="primary" type="submit">
-//         Submit
-//       </Button>
-//       {error && <div className="text-danger pb-3"> {error.message}</div>}
-//     </Form>
-//   );
-// };
+const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
+    const [formData, setFormData] = useState({
+        email: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [addUser, { loading, error }] = useMutation(ADD_USER);
+    const navigate = useNavigate(); // Initialize useNavigate
 
-// export default RegisterForm;
+    const handleFormSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+
+        // Clear any previous error message
+        setErrorMessage(null);
+
+        // Validation
+        if (!validator.isEmail(formData.email)) {
+            setErrorMessage("Please enter a valid email address.");
+            return;
+        }
+
+        if (!validator.isLength(formData.password, { min: 8 })) {
+            setErrorMessage("Password must be at least 8 characters long.");
+            return;
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            setErrorMessage("Passwords do not match.");
+            return;
+        }
+
+        try {
+            const { data } = await addUser({ variables: { ...formData } });
+            Auth.login(data.addUser.token);
+            onSuccess();
+            navigate("/");
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                if (e.message.includes("duplicate key error")) {
+                    setErrorMessage("Email is already registered.");
+                } else {
+                    console.error(e);
+                    setErrorMessage("An error occurred. Please try again.");
+                }
+            } else {
+                setErrorMessage("An unexpected error occurred.");
+            }
+        }
+    };
+
+    return (
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+            <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-300">
+                    Username
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                    <input
+                        id="username"
+                        type="text"
+                        required
+                        value={formData.username}
+                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                        className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                        placeholder="Enter your username"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+                    Email address
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                    <input
+                        id="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                        placeholder="you@example.com"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+                    Password
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                    <input
+                        id="password"
+                        type="password"
+                        required
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                        placeholder="••••••••"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
+                    Confirm Password
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        required
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                        placeholder="••••••••"
+                    />
+                </div>
+            </div>
+
+            {errorMessage && <div className="text-red-500 text-sm mt-2">{errorMessage}</div>}
+
+            <button
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-150 ease-in-out disabled:opacity-50"
+                disabled={loading}
+            >
+                {loading ? "Loading..." : "Sign up"}
+            </button>
+            {/* Display mutation error message if there's any */}
+            {error && !errorMessage && <div className="text-red-500 text-sm mt-2">{error.message}</div>}
+        </form>
+    );
+};
+
+export default RegisterForm;
