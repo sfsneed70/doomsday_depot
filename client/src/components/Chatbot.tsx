@@ -14,7 +14,7 @@ const Chatbot = () => {
     useEffect(() => {
         const initialMessage: Message = {
             sender: 'ai',
-            text: 'Welcome to the Apocalyptic Store! How can I assist you today?'
+            text: 'Welcome to Doomsday Depot! How can I assist you today?'
         };
         setMessages([initialMessage]);
     }, []);
