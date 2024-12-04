@@ -19,6 +19,7 @@ const typeDefs = gql`
     stock: Int!
     onSale: Boolean
     salePrice: Float
+    onSaleDate: String
     reviews: [Review]
     reviewCount: Int
     rating: Float
