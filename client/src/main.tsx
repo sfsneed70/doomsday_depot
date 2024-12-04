@@ -1,9 +1,9 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ApolloProvider } from "@apollo/client"; // Import ApolloProvider
-import client from "./apolloClient"; // Import Apollo Client setup
+import { ApolloProvider } from "@apollo/client"; 
+import client from "./apolloClient"; 
 import "../index.css"; 
-import { CartProvider } from "./context/CartContext"; // Import CartProvider
+import { CartProvider } from "./context/CartContext"; 
 
 import App from "./App";
 import Home from "./pages/Home";
@@ -37,11 +37,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/weapons",
-        element: <WeaponsPage />,
+        element: <WeaponsPage />, // Retained the weapons route
       },
       {
-        path: "/category/:categoryName",
-        element: <CategoryPage />,
+        path: "/category/:categoryName", // Dynamic category route
+        element: <CategoryPage />, // Component to handle category display
       },
     ],
   },
@@ -54,3 +54,4 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </CartProvider>
   </ApolloProvider>
 );
+
