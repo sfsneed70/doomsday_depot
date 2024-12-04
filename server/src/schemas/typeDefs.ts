@@ -17,7 +17,6 @@ const typeDefs = gql`
     imageUrl: String!
     price: Float!
     stock: Int!
-    onSaleDate: String
     onSale: Boolean
     salePrice: Float
     reviews: [Review]
