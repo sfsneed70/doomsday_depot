@@ -2,16 +2,12 @@ import { Schema, model, type Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import type { IBasketItem } from "./BasketItem";
 import basketItemSchema from "./BasketItem.js";
-import type { IProduct } from "./Product";
-import ts from "typescript";
 
 interface IUser extends Document {
   username: string;
   email: string;
   password: string;
   isCorrectPassword(password: string): Promise<boolean>;
-  // blogs: Types.ObjectId[];
-  // blogCount: number;
   basket: IBasketItem[];
   basketCount: number;
   basketTotal: number;
@@ -34,13 +30,6 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
     },
-    // Referenced pattern (similar to a foreign key in SQL)
-    // blogs: [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Blog",
-    //   },
-    // ],
     basket: [basketItemSchema],
   },
   // set this to use virtual below
@@ -66,10 +55,6 @@ userSchema.methods.isCorrectPassword = async function (
 ): Promise<boolean> {
   return await bcrypt.compare(password, this.password);
 };
-
-// userSchema.virtual("blogCount").get(function (this: IUser) {
-//   return this.blogs.length;
-// });
 
 userSchema.virtual("basketCount").get(function (this: IUser) {
   return this.basket.length;
