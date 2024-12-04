@@ -1,14 +1,17 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import "bootstrap/dist/css/bootstrap.min.css";
-import "../index.css";
+import { ApolloProvider } from "@apollo/client"; // Import ApolloProvider
+import client from "./apolloClient"; // Import Apollo Client setup
+import "../index.css"; 
+import { CartProvider } from "./context/CartContext"; // Import CartProvider
 
-import App from "./App.jsx";
+import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import WeaponsPage from "./pages/WeaponsPage";
-import ShopDisplay from "./pages/ShopDisplay.js";
+import ShopDisplay from "./pages/ShopDisplay";
+import CategoryPage from "./pages/CategoryPage";
 
 const router = createBrowserRouter([
   {
@@ -20,31 +23,34 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-      // {
-      //   path: "/product/:productId",
-      //   element: <Product />,
-      // },
       {
         path: "/login",
         element: <Login />,
       },
       {
         path: "/signup",
-        element: <Signup />
+        element: <Signup />,
       },
       {
         path: "/shop",
         element: <ShopDisplay />,
       },
       {
-        path: "weapons", // Route for the weapons category
+        path: "/weapons",
         element: <WeaponsPage />,
+      },
+      {
+        path: "/category/:categoryName",
+        element: <CategoryPage />,
       },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />,
+  <ApolloProvider client={client}>
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
+  </ApolloProvider>
 );
-

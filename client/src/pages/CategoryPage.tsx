@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { GET_CATEGORY } from "../utils/queries";
+import { GET_CATEGORY_BY_NAME } from "../utils/queries";
 import CategoryProductsDisplay from "../components/CategoryProductsDisplay";
 
 interface Product {
@@ -14,20 +14,20 @@ interface Product {
 }
 
 const CategoryPage: React.FC = () => {
-  const { categoryId } = useParams<{ categoryId: string }>();
+  const { categoryName } = useParams<{ categoryName: string }>(); 
 
-  if (!categoryId) {
-    return <p>Error: No categoryId provided in the URL.</p>;
+  if (!categoryName) {
+    return <p>Error: No category name provided in the URL.</p>;
   }
 
-  const { loading, error, data } = useQuery(GET_CATEGORY, {
-    variables: { categoryId },
+  const { loading, error, data } = useQuery(GET_CATEGORY_BY_NAME, {
+    variables: { categoryName }, 
   });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const category = data.category;
+  const category = data.categoryByName;
   const products: Product[] = category.products;
 
   if (!category || !products) {
@@ -51,6 +51,7 @@ const CategoryPage: React.FC = () => {
 };
 
 export default CategoryPage;
+ 
 
 
 

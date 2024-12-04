@@ -1,26 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_CATEGORY } from "../utils/queries"; // Adjust path as needed
+import { useCart } from "../context/CartContext"; // Import Cart Context
+import ProductModal from "../components/ProductModal"; // Import ProductModal component
+import { Product } from "../types"; // Import shared Product type
 
 const WeaponsPage: React.FC = () => {
   // Replace "weapons-category-id" with the actual ID of your "Weapons" category
   const { loading, error, data } = useQuery(GET_CATEGORY, {
     variables: { categoryId: "674fabc8dda05c5eede30216" },
   });
+  console.log("WeaponsPage data:", data);
+
+
+  const { dispatch } = useCart(); // Use Cart Context for adding items to cart
+
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   if (loading) return <p>Loading weapons...</p>;
   if (error) return <p>Error loading weapons: {error.message}</p>;
 
   const category = data.category;
 
+  const handleOpenModal = (product: Product) => {
+    setSelectedProduct(product);
+    setModalOpen(true);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    dispatch({ type: "ADD_TO_CART", payload: product });
+    setModalOpen(false);
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">{category.name}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {category.products.map((product: any) => (
+        {category.products.map((product: Product) => (
           <div
             key={product._id}
-            className="relative overflow-hidden h-96 w-full rounded-lg group shadow-lg"
+            className="relative overflow-hidden h-96 w-full rounded-lg group shadow-lg cursor-pointer"
+            onClick={() => handleOpenModal(product)}
           >
             <div className="w-full h-full cursor-pointer">
               <img
@@ -45,6 +66,14 @@ const WeaponsPage: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Modal for product details */}
+      <ProductModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 };

@@ -1,24 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
+import ProductModal from "./ProductModal";
+import { useCart } from "../context/CartContext";
+import { Product } from "../types"; // Import shared Product type
 
 interface CategoryProductsDisplayProps {
-  product: {
-    _id: string;
-    name: string;
-    imageUrl: string;
-    description: string;
-    price: number;
-    stock: number;
-  };
+  product: Product;
 }
 
 const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ product }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const { dispatch } = useCart();
+
+  const handleAddToCart = (product: Product) => {
+    dispatch({ type: "ADD_TO_CART", payload: product });
+  };
+
   return (
-    <div
-      key={product._id}
-      className="relative overflow-hidden h-96 w-full rounded-lg group shadow-lg"
-    >
-      <div className="w-full h-full cursor-pointer">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 opacity-50 z-10" />
+    <>
+      <div
+        className="relative overflow-hidden h-96 w-full rounded-lg group shadow-lg cursor-pointer"
+        onClick={() => setModalOpen(true)}
+      >
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -29,15 +31,18 @@ const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ produ
           <h3 className="text-white text-2xl font-bold mb-2">{product.name}</h3>
           <p className="text-gray-200 text-sm">{product.description}</p>
           <p className="text-gray-200 text-sm font-semibold mt-2">
-            <span>Price: </span>${product.price.toFixed(2)}
-          </p>
-          <p className="text-gray-200 text-sm font-semibold">
-            <span>Stock: </span>
-            {product.stock} left
+            Price: ${product.price.toFixed(2)}
           </p>
         </div>
       </div>
-    </div>
+
+      <ProductModal
+        product={product}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onAddToCart={handleAddToCart}
+      />
+    </>
   );
 };
 
