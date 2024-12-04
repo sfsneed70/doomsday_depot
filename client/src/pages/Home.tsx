@@ -21,6 +21,7 @@ const Home = () => {
     imageUrl: product.imageUrl,
     reviewCount: product.reviewCount,
     rating: product.rating,
+    onSaleDate: product.onSaleDate,
   }));
 
   return (

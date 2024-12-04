@@ -1,6 +1,7 @@
-import React, {useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Star } from "lucide-react";
+import dayjs from 'dayjs';
 
 
 type DealItemProps = {
@@ -17,17 +18,23 @@ type DealItemProps = {
 };
 
 const DealItem: React.FC<DealItemProps> = ({ deal }) => {
+    const formattedRating = deal.rating % 1 === 0 ? deal.rating.toFixed(0) : deal.rating.toFixed(1);
     const [countdown, setCountdown] = useState<string>('');
 
     const calculateCountdown = (saleDate: string) => {
-        const saleTime = new Date(saleDate).getTime();
-        const currentTime = Date.now();
-        const timeRemaining = saleTime - currentTime;
+        const saleTime = dayjs(parseInt(saleDate));
+        const currentTime = dayjs();
+        const timeRemaining = saleTime.diff(currentTime);
 
-        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        if (timeRemaining <= 0) {
+            return "Deal expired";
+        }
+
+        const days = saleTime.diff(currentTime, 'days');
+        const hours = saleTime.diff(currentTime, 'hours') % 24;
+        const minutes = saleTime.diff(currentTime, 'minutes') % 60;
+        const seconds = saleTime.diff(currentTime, 'seconds') % 60;
+
 
         return `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
@@ -37,12 +44,12 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
             setCountdown(calculateCountdown(deal.onSaleDate));
         }, 1000); // updates every second
 
+        // Initial countdown
         setCountdown(calculateCountdown(deal.onSaleDate));
 
         return () => clearInterval(interval);
     }, [deal.onSaleDate]);
 
-    const formattedRating = deal.rating % 1 === 0 ? deal.rating.toFixed(0) : deal.rating.toFixed(1);
     // const fullStars = Math.floor(deal.rating);
     // const halfStar = deal.rating % 1 >= 0.5;
     // const emptyStars = 5 - Math.ceil(deal.rating);
@@ -74,6 +81,13 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
                         className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                         loading="lazy"
                     />
+
+                    {/* Display countdown */}
+                    <div className="absolute top-2 right-2 text-red-500 p-2 rounded-md z-20">
+                        <p className="text-sm">Sale ends in: {countdown}</p>
+                    </div>
+
+                    {/* Info */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
                         <h3 className="text-white text-xl font-bold mb-2 truncate">{deal.name}</h3>
                         <div className="flex items-center gap-2">
