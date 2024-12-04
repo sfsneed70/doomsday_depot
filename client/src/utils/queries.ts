@@ -43,6 +43,7 @@ export const GET_PRODUCT = gql`
       rating
       onSale
       salePrice
+      onSaleDate
     }
   }
 `;
@@ -67,6 +68,7 @@ export const GET_PRODUCTS = gql`
       rating
       onSale
       salePrice
+      onSaleDate
     }
   }
 `;
@@ -84,6 +86,33 @@ export const GET_CATEGORIES = gql`
 export const GET_CATEGORY = gql`
   query Category($categoryId: ID!) {
     category(categoryId: $categoryId) {
+      _id
+      name
+      imageUrl
+      products {
+        _id
+        name
+        description
+        imageUrl
+        price
+        stock
+        reviews {
+          _id
+          username
+          review
+          rating
+          dateCreated
+        }
+        reviewCount
+        rating
+      }
+    }
+  }
+`;
+
+export const GET_CATEGORY_BY_NAME = gql`
+  query CategoryByName($categoryName: String!) {
+    categoryByName(categoryName: $categoryName) {
       _id
       name
       imageUrl
