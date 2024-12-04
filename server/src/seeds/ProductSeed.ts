@@ -14,6 +14,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/71w3WlJslmL.__AC_SX300_SY300_QL70_FMwebp_.jpg",
       price: 34.99,
       stock: 50,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
     {
       name: "Machete",
@@ -37,6 +38,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/61OP1BepnYL._AC_UL320_.jpg",
       price: 79.99,
       stock: 20,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
     {
       name: "Scoped Rifle",
@@ -60,6 +62,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/71fKX1BD5cL._AC_UL320_.jpg",
       price: 19.99,
       stock: 100,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
     {
       name: "Deluxe First Aid Kit",
@@ -76,6 +79,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/81C6VHe--jL._AC_UL320_.jpg",
       price: 49.99,
       stock: 40,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
     {
       name: "Portable Shelter",
@@ -92,6 +96,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/8173Azcsm2L._AC_UY218_.jpg",
       price: 149.99,
       stock: 15,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
     {
       name: "Portable Stove",
@@ -136,6 +141,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/61Fyew+X5jL._AC_UL320_.jpg",
       price: 129.99,
       stock: 20,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
     {
       name: "Camouflage Pants",

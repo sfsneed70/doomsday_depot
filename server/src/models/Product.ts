@@ -9,6 +9,8 @@ export interface IProduct extends Document {
   imageUrl: string;
   price: number;
   stock: number;
+  onSale: boolean;
+  onSaleDate: Date;
   dateCreated: Date | string;
   reviews: IReview[];
 }
@@ -36,6 +38,10 @@ const productSchema = new Schema<IProduct>(
         type: Number,
         required: true,
       },
+      onSaleDate: {
+        type: Date,
+        default: Date.now,
+      },
       dateCreated: {
         type: Date,
         default: Date.now,
@@ -60,6 +66,17 @@ const productSchema = new Schema<IProduct>(
     if (this.reviews.length === 0) return 0;
     const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
     return (sum / this.reviews.length).toFixed(2);
+  });
+
+  productSchema.virtual("onSale").get(function (this: IProduct) {
+    return this.onSaleDate > new Date(Date.now());
+  });
+
+  productSchema.virtual("salePrice").get(function (this: IProduct) {
+    if (this.onSale) {
+      return (this.price * 0.8).toFixed(2);
+    }
+    return this.price;
   });
   
   const Product = model<IProduct>("Product", productSchema);

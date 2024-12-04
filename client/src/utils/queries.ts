@@ -41,6 +41,8 @@ export const GET_PRODUCT = gql`
       }
       reviewCount
       rating
+      onSale
+      salePrice
     }
   }
 `;
@@ -63,6 +65,8 @@ export const GET_PRODUCTS = gql`
       }
       reviewCount
       rating
+      onSale
+      salePrice
     }
   }
 `;
