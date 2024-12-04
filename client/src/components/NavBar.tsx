@@ -26,7 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
             to="/"
             className="text-2xl font-bold text-emerald-400 flex items-center space-x-2 hover:text-emerald-300"
           >
-            Store Name
+            Doomsday Depot
           </NavLink>
 
           {/* Menu */}

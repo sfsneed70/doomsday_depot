@@ -31,8 +31,8 @@ const Home = () => {
         <h1 className="text-center text 5xl sm:text-6xl font-bold text-emerald-400 mb-4">
           Categories
         </h1>
-        <p className="text-center text-xl text-gray-300 mb-12">
-          Apocalypse tagline
+        <p className="text-center text-xl sm:text-xl font-bold text-gray-200 mb-12 italic leading-relaxed text-shadow-lg">
+        "Welcome to Doomsday Depot – Where Survival Meets Style. Gear up, the end is near, but your journey starts here!"
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {dataCategories.categories.map((category: { _id: string, name: string, imageUrl: string }) => (
@@ -47,7 +47,7 @@ const Home = () => {
         <h2 className="text-center text 5xl sm:text-6xl font-bold text-emerald-400 mb-4 pt-16">
           Amazing Deals Daily
         </h2>
-        <p className="text-center text-xl text-gray-300 mb-12">
+        <p className="text-center text-xl sm:text-xl font-bold text-gray-200 mb-12 italic leading-relaxed text-shadow-lg">
           Grab these exclusive deals before they're gone!
         </p>
         <DealCarousel deal={deals} />
