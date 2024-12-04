@@ -30,7 +30,6 @@ const basketItemSchema = new Schema<IBasketItem>(
   {
     toJSON: {
       virtuals: true,
-      getters: true,
     },
   }
 );

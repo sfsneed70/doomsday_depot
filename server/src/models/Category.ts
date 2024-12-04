@@ -25,7 +25,6 @@ const CategorySchema = new Schema<ICategory>(
   {
     toJSON: {
       virtuals: true,
-      getters: true,
     },
   }
 );
