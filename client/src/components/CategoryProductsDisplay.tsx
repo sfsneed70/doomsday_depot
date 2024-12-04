@@ -23,7 +23,7 @@ const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ produ
         aria-label={`View details for ${product.name}`}
       >
         <img
-          src={product.imageUrl || "/placeholder.jpg"} // Fallback image
+          src={product.imageUrl || "/placeholder.jpg"} // Catch Image
           alt={product.name || "Product image"}
           className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           loading="lazy"

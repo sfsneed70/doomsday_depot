@@ -6,7 +6,7 @@ import ProductModal from "../components/ProductModal"; // Import ProductModal co
 import { Product } from "../types"; // Import shared Product type
 
 const WeaponsPage: React.FC = () => {
-  // Replace "weapons-category-id" with the actual ID of your "Weapons" category
+
   const { loading, error, data } = useQuery(GET_CATEGORY, {
     variables: { categoryId: "674fabc8dda05c5eede30216" },
   });

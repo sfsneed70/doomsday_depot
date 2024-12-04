@@ -4,7 +4,6 @@ import { ApolloProvider } from "@apollo/client";
 import client from "./apolloClient"; 
 import "../index.css"; 
 import { CartProvider } from "./context/CartContext"; 
-
 import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -37,11 +36,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/weapons",
-        element: <WeaponsPage />, // Retained the weapons route
+        element: <WeaponsPage />, // Retain for draft purposes, will delete
       },
       {
-        path: "/category/:categoryName", // Dynamic category route
-        element: <CategoryPage />, // Component to handle category display
+        path: "/category/:categoryName",
+        element: <CategoryPage />, 
       },
     ],
   },
