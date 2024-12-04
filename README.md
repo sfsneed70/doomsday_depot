@@ -4,25 +4,23 @@
 
 ## Description
 
-Your go-to platform for nutritious and tasty recipes! Our website offers a seamless way to search for recipes by nutritional content, save your favorite dishes, and effortlessly share them via email. Perfect for health-conscious individuals and food lovers alike, we make it easy to plan meals and stay on track with your dietary goals.
+Your one-stop shop for all your post-apocolyptic needs.  Browse various categories including tools, weapons, medical, shelter, etc.  You'll find everything you need for the next zombie or nuclear appocalypse. Perfect for preppers and survivalists.  Don't forget to watch out for our weekly 20% off specials.
 
-![App Screenshot](/client/src/assets/screenshot.png)
+![App Screenshot](???)
 
 ## Concept
 
-- Find recipes with ease: Search for dishes based on specific nutritional values to fit your dietary needs.
+- Find any item you need: Browse all the major categories of survivalist gear.
 
-- Save your favorites: Easily store recipes for future use and quick access.
+- Save money as well: Weekly 20% off sale items.
 
-- Share with a click: Share your top recipes via email with friends and family.
+- Fill your basket: Simply add the products you want to your shopping basket.
 
-- Perfect for health-conscious individuals: Tailored for those looking to maintain healthy eating habits while enjoying delicious meals.
-
-- Meal planning made simple: Quickly compile recipes to build weekly meal plans with balanced nutrition.
+- Perfect for preppers and survivalist: Tailored for those looking to survive the next appocalypse..
 
 ## App Design/Build
 
-Recipe Box provides a pleasant user experience with a responsive web design using the following technologies.
+Doomsday Depot provides a seamless user experience with a responsive web design using the following technologies.
 
 Backend
 
@@ -58,7 +56,7 @@ Application:
 
 - Live site: ???
 
-- Github Repo: https://github.com/sheetalmangate/RecipeBox
+- Github Repo: https://github.com/sfsneed70/doomsday_depot
 
 ## License
 
