@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 // import Edit from "./pages/Edit";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import WeaponsPage from "./pages/WeaponsPage";
 import ShopDisplay from "./pages/ShopDisplay.js";
 
 const router = createBrowserRouter([
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
         path: "/shop",
         element: <ShopDisplay />,
       },
+      {
+        path: "weapons", // Route for the weapons category
+        element: <WeaponsPage />,
+      },
     ],
   },
 ]);
@@ -57,3 +62,4 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <RouterProvider router={router} />,
 );
+

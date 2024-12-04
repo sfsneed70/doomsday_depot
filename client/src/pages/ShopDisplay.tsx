@@ -44,3 +44,4 @@ const ShopDisplay: React.FC = () => {
 
 export default ShopDisplay;
 
+
