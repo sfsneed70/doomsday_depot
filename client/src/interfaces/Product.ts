@@ -7,6 +7,9 @@ export interface IProduct {
   imageUrl: string;
   price: number;
   stock: number;
+  onSale?: boolean;
+  salePrice?: number;
+  onSaleDate?: string;
   reviews: IReview[] | null | [];
   reviewCount?: number;
   rating?: number;

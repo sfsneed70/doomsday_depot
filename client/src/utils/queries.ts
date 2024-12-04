@@ -43,6 +43,7 @@ export const GET_PRODUCT = gql`
       rating
       onSale
       salePrice
+      onSaleDate
     }
   }
 `;
@@ -67,6 +68,7 @@ export const GET_PRODUCTS = gql`
       rating
       onSale
       salePrice
+      onSaleDate
     }
   }
 `;
@@ -107,6 +109,7 @@ export const GET_CATEGORY = gql`
     }
   }
 `;
+
 export const GET_CATEGORY_BY_NAME = gql`
   query CategoryByName($categoryName: String!) {
     categoryByName(categoryName: $categoryName) {
@@ -133,4 +136,3 @@ export const GET_CATEGORY_BY_NAME = gql`
     }
   }
 `;
-
