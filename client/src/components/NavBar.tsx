@@ -22,12 +22,14 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-wrap items-center justify-between">
           {/* Brand */}
-          <NavLink
+            <NavLink
             to="/"
             className="text-2xl font-bold text-emerald-400 flex items-center space-x-2 hover:text-emerald-300"
-          >
-            Store Name
-          </NavLink>
+            >
+            <img src="/apocalypse.png" alt="Apocalypse Icon" className="w-6 h-6" />
+            <span>DOOMSDAY DEPOT</span>
+            <img src="/apocalypse.png" alt="Apocalypse Icon" className="w-6 h-6" />
+            </NavLink>
 
           {/* Menu */}
           <nav className="flex items-center gap-4">
