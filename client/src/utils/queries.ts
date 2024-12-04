@@ -6,72 +6,19 @@ export const GET_ME = gql`
       _id
       username
       email
-      blogCount
-      blogs {
-        _id
-        username
-        title
-        content
-        dateCreated
-        comments {
+      basket {
+        product {
           _id
-          username
-          comment
-          dateCreated
+          name
+          description
+          imageUrl
+          price
+          stock
         }
-        commentCount
-        basket {
-          product {
-            _id
-            name
-            description
-            imageUrl
-            price
-            stock
-          }
-          quantity
-        }
-        basketCount
-        basketTotal
+        quantity
       }
-    }
-  }
-`;
-
-export const GET_BLOGS = gql`
-  query Blogs {
-    blogs {
-      _id
-      username
-      title
-      content
-      dateCreated
-      comments {
-        _id
-        username
-        comment
-        dateCreated
-      }
-      commentCount
-    }
-  }
-`;
-
-export const GET_BLOG = gql`
-  query Blog($blogId: ID!) {
-    blog(blogId: $blogId) {
-      _id
-      username
-      title
-      content
-      dateCreated
-      comments {
-        _id
-        username
-        comment
-        dateCreated
-      }
-      commentCount
+      basketCount
+      basketTotal
     }
   }
 `;
@@ -94,6 +41,8 @@ export const GET_PRODUCT = gql`
       }
       reviewCount
       rating
+      onSale
+      salePrice
     }
   }
 `;
@@ -116,6 +65,8 @@ export const GET_PRODUCTS = gql`
       }
       reviewCount
       rating
+      onSale
+      salePrice
     }
   }
 `;

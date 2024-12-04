@@ -5,9 +5,6 @@ import "../index.css";
 
 import App from "./App.jsx";
 import Home from "./pages/Home";
-// import Blog from "./pages/SingleBlog";
-// import Profile from "./pages/Profile";
-// import Edit from "./pages/Edit";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import WeaponsPage from "./pages/WeaponsPage";
@@ -24,20 +21,8 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       // {
-      //   path: "/blog/:blogId",
-      //   element: <Blog />,
-      // },
-      // {
       //   path: "/product/:productId",
       //   element: <Product />,
-      // },
-      // {
-      //   path: "/profile",
-      //   element: <Profile />,
-      // },
-      // {
-      //   path: "/edit-blog/:blogId",
-      //   element: <Edit />,
       // },
       {
         path: "/login",

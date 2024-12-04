@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { GET_PRODUCTS } from "../utils/queries";
+import { IProduct } from "../interfaces/Product";
 
 const ShopDisplay: React.FC = () => {
   const { loading, error, data } = useQuery(GET_PRODUCTS);
@@ -12,7 +13,7 @@ const ShopDisplay: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-      {products.map((product: any) => (
+      {products.map((product: IProduct) => (
         <div
           key={product._id}
           className="relative overflow-hidden h-96 w-full rounded-lg group shadow-lg"
