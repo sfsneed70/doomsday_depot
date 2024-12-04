@@ -1,8 +1,9 @@
 import { Schema, type Document } from "mongoose";
+import type { IProduct } from "./Product";
 import dayjs from "dayjs";
 
 export interface IBasketItem extends Document {
-  product: Schema.Types.ObjectId;
+  product: IProduct;
   quantity: number;
   dateAdded: Date | string;
 }

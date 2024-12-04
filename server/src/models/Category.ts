@@ -1,10 +1,11 @@
 import { Schema, model, type Document, Types } from "mongoose";
+import type { IProduct } from "./Product";
 import dayjs from "dayjs";
 
 export interface ICategory extends Document {
   name: string;
   imageUrl: string;
-  products: Types.ObjectId[];
+  products: IProduct[];
   productCount: number;
   dateCreated: Date | string;
 }
