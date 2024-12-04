@@ -1,5 +1,7 @@
+import React, {useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Star } from "lucide-react";
+
 
 type DealItemProps = {
     deal: {
@@ -10,10 +12,37 @@ type DealItemProps = {
         rating: number;
         reviewCount: number;
         imageUrl: string;
+        onSaleDate: string;
     }
 };
 
 const DealItem: React.FC<DealItemProps> = ({ deal }) => {
+    const [countdown, setCountdown] = useState<string>('');
+
+    const calculateCountdown = (saleDate: string) => {
+        const saleTime = new Date(saleDate).getTime();
+        const currentTime = Date.now();
+        const timeRemaining = saleTime - currentTime;
+
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCountdown(calculateCountdown(deal.onSaleDate));
+        }, 1000); // updates every second
+
+        setCountdown(calculateCountdown(deal.onSaleDate));
+
+        return () => clearInterval(interval);
+    }, [deal.onSaleDate]);
+
+    const formattedRating = deal.rating % 1 === 0 ? deal.rating.toFixed(0) : deal.rating.toFixed(1);
     // const fullStars = Math.floor(deal.rating);
     // const halfStar = deal.rating % 1 >= 0.5;
     // const emptyStars = 5 - Math.ceil(deal.rating);
@@ -33,8 +62,6 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
     //     ))
     // }
     // <span className="ml-2 text-sm text-gray-300">({deal.rating})</span>
-
-    const formattedRating = deal.rating % 1 === 0 ? deal.rating.toFixed(0) : deal.rating.toFixed(1);
 
     return (
         <div className="relative overflow-hidden h-96 w-full rounded-lg group bg-white shadow-lg">

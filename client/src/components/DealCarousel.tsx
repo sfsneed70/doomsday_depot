@@ -14,6 +14,7 @@ type DealCarouselProps = {
         rating: number;
         reviewCount: number;
         imageUrl: string;
+        onSaleDate: string;
     }>;
 };
 
