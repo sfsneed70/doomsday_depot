@@ -6,8 +6,9 @@ type DealItemProps = {
         id: number;
         name: string;
         price: number;
+        salePrice: number;
         rating: number;
-        ratingCount: number;
+        reviewCount: number;
         imageUrl: string;
     }
 };
@@ -37,8 +38,7 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
 
     return (
         <div className="relative overflow-hidden h-96 w-full rounded-lg group bg-white shadow-lg">
-            <NavLink to={`/deals/${deal.id}`} className="block w-full h-full" // change link to actual route
-            >
+            <NavLink to={`/product/${deal.name}`} className="block w-full h-full">
                 <div className="w-full h-full cursor-pointer">
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 opacity-50 z-10" />
                     <img
@@ -49,20 +49,37 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
                     />
                     <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
                         <h3 className="text-white text-xl font-bold mb-2 truncate">{deal.name}</h3>
-                        <p className="text-emerald-400 text-lg font-semibold">${deal.price.toFixed(2)}</p>
-                        <div className="flex items-center mt-2">
-                            {/* stars */}
-                            <p className="text-white text-sm">
-                            {formattedRating} <Star fill="yellow" className="inline h-5 w-5 text-yellow-400" /> ({deal.ratingCount.toLocaleString()})
-                            </p>
+                        <div className="flex items-center gap-2">
+                            {/* Show original price with strikethrough if salePrice exists */}
+                            {deal.salePrice ? (
+                                <p className="text-red-500 text-lg line-through">
+                                    ${deal.price.toFixed(2)}
+                                </p>
+                            ) : (
+                                <p className="text-emerald-400 text-lg font-semibold">
+                                    ${deal.price.toFixed(2)}
+                                </p>
+                            )}
 
+                            {/* Show sale price if it exists */}
+                            {deal.salePrice && (
+                                <p className="text-emerald-400 text-lg font-semibold">
+                                    ${deal.salePrice.toFixed(2)}
+                                </p>
+                            )}
+                        </div>
+                        <div className="flex items-center mt-2">
+                            {/* Render rating */}
+                            <p className="text-white text-sm">
+                                {formattedRating} <Star fill="yellow" className="inline h-5 w-5 text-yellow-400" /> ({deal.reviewCount.toLocaleString()})
+                            </p>
                         </div>
                     </div>
                 </div>
             </NavLink>
-
         </div>
     );
 };
+
 
 export default DealItem;

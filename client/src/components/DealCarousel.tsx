@@ -10,8 +10,9 @@ type DealCarouselProps = {
         id: number;
         name: string;
         price: number;
+        salePrice: number;
         rating: number;
-        ratingCount: number;
+        reviewCount: number;
         imageUrl: string;
     }>;
 };
