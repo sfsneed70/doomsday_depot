@@ -50,11 +50,6 @@ const typeDefs = gql`
     user: User
   }
 
-  input BlogInput {
-    title: String!
-    content: String!
-  }
-
   type Category {
     _id: ID
     name: String!

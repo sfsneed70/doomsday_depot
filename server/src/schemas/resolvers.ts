@@ -18,7 +18,7 @@ const resolvers = {
   Query: {
     me: async (_parent: any, _args: any, context: IUserContext) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate("blogs").populate("basket.product");
+        const user = await User.findById(context.user._id).populate("basket.product");
         return user;
       }
       throw forbiddenException;
