@@ -112,6 +112,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/616i4UdMm+L._AC_UL320_.jpg",
       price: 299.99,
       stock: 15,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       reviews: [
         {
           username: "SurvivalistSteve",
@@ -151,6 +152,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/51yns2R57oL._AC_UL320_.jpg",
       price: 99.99,
       stock: 30,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       reviews: [
         {
           username: "SurvivalistSteve",
@@ -308,6 +310,7 @@ const productData = {
       imageUrl: "https://m.media-amazon.com/images/I/71dt0RnwKoL._AC_UL320_.jpg",
       price: 19.99,
       stock: 100,
+      onSaleDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       reviews: [
         {
           username: "SurvivalistSteve",

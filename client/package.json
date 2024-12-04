@@ -17,6 +17,7 @@
     "@types/validator": "^13.12.2",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "axios": "^1.7.8",
+    "dayjs": "^1.11.13",
     "framer-motion": "^11.11.17",
     "graphql": "^16.9.0",
     "jwt-decode": "^4.0.0",
