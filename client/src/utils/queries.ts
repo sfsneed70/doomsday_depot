@@ -43,6 +43,7 @@ export const GET_PRODUCT = gql`
       rating
       onSale
       salePrice
+      onSaleDate
     }
   }
 `;
@@ -67,6 +68,7 @@ export const GET_PRODUCTS = gql`
       rating
       onSale
       salePrice
+      onSaleDate
     }
   }
 `;
