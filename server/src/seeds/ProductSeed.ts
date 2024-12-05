@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+import CategoryName from "../models/CategoryName.js"
 
 // Load environment variables
 dotenv.config();
@@ -461,33 +462,37 @@ const productData = {
 
 const seedDatabase = async () => {
   try {
-    // Get MongoDB URI from .env or locally
     const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/e_shop_db";
-    if (!mongoUri) {
-      throw new Error("MONGODB_URI is not defined in .env");
-    }
-
-    // Connect to MongoDB
-    await mongoose.connect(mongoUri, {
-      
-    });
+    await mongoose.connect(mongoUri);
     console.log("Connected to MongoDB");
 
     // Clear existing data
     await Product.deleteMany({});
     await Category.deleteMany({});
+    await CategoryName.deleteMany({});
     console.log("Cleared existing data");
 
     // Seed products and categories
     for (const [categoryKey, products] of Object.entries(productData)) {
       const productDocs = await Product.insertMany(products);
+
+      // Populate Category
       const category = new Category({
-        name: categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1), 
+        name: categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1),
         imageUrl: `/${categoryKey}.jpg`,
-        products: productDocs.map((product) => product._id), 
+        products: productDocs.map((product) => product._id),
       });
       await category.save();
+
+      // Populate CategoryName
+      const categoryName = new CategoryName({
+        name: categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1),
+        imageUrl: `/${categoryKey}.jpg`,
+        products: productDocs.map((product) => product._id),
+      });
+      await categoryName.save();
     }
+
     console.log("Seeded categories and products successfully");
   } catch (err) {
     console.error("Error seeding database:", err);

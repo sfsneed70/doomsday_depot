@@ -67,6 +67,14 @@ const typeDefs = gql`
     imageUrl: String!
   }
 
+  type CategoryName {
+    _id: ID
+    name: String!
+    imageUrl: String!
+    products: [Product]
+    productCount: Int
+  }
+
   type Query {
     me: User
 
@@ -75,6 +83,10 @@ const typeDefs = gql`
     category(categoryId: ID!): Category
     categories: [Category]
 
+    categoryByName(categoryName: String!): Category
+    categoryNames: [CategoryName] # New Query to fetch all category names
+
+    # checkout: 
   }
 
   type Mutation {
@@ -98,3 +110,4 @@ const typeDefs = gql`
 `;
 
 export default typeDefs;
+

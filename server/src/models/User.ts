@@ -8,6 +8,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   isCorrectPassword(password: string): Promise<boolean>;
+  orders: Types.ObjectId[];
   basket: IBasketItem[];
   basketCount: number;
   basketTotal: number;
@@ -31,6 +32,12 @@ const userSchema = new Schema<IUser>(
       required: true,
     },
     basket: [basketItemSchema],
+    orders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   // set this to use virtual below
   {

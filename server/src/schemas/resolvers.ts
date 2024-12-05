@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { User, Product, Category } from "../models/index.js";
+import { User, Product, Category, CategoryName } from "../models/index.js";
 import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
@@ -41,9 +41,35 @@ const resolvers = {
       return Category.find().sort({ name: 1 });
     },
 
+    categoryByName: async (_parent: any, { categoryName }: { categoryName: string }) => {
+      try {
+        const category = await CategoryName.findOne({ name: categoryName }).populate("products");
+        if (!category) {
+          throw new GraphQLError("Category not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        return category;
+      } catch (error) {
+        console.error("Error fetching category by name:", error);
+        throw new GraphQLError("Error fetching category by name.");
+      }
+    },
+
+    categoryNames: async () => {
+      try {
+        return await CategoryName.find().sort({ name: 1 });
+      } catch (error) {
+        console.error("Error fetching category names:", error);
+        throw new GraphQLError("Error fetching category names.");
+      }
+    },
+
     checkout: async (_parent: any, args: any, context: IUserContext) => {
       let url;
-      if(context.headers) {
+      if (context.headers) {
         url = new URL(context.headers.referer || "").origin;
       }
       const order = new Order({ products: args.products });
