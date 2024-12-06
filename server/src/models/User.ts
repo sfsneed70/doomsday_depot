@@ -2,13 +2,14 @@ import { Schema, model, type Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import type { IBasketItem } from "./BasketItem";
 import basketItemSchema from "./BasketItem.js";
+import orderSchema from "./Order.js";
 
 interface IUser extends Document {
   username: string;
   email: string;
   password: string;
   isCorrectPassword(password: string): Promise<boolean>;
-  orders: Types.ObjectId[];
+  orders: Types.Array<Types.ObjectId>;
   basket: IBasketItem[];
   basketCount: number;
   basketTotal: number;
@@ -32,12 +33,7 @@ const userSchema = new Schema<IUser>(
       required: true,
     },
     basket: [basketItemSchema],
-    orders: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Order",
-      },
-    ],
+    orders: [orderSchema],
   },
   // set this to use virtual below
   {

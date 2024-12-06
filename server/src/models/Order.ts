@@ -1,16 +1,22 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
-const orderSchema = new Schema({
+import { Schema, Document } from "mongoose";
+import { IProduct } from "./Product";
+
+export interface IOrder extends Document {
+  purchaseDate: Date;
+  products: IProduct[];
+}
+
+const orderSchema = new Schema<IOrder>({
   purchaseDate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   products: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Product'
-    }
-  ]
+      ref: "Product",
+    },
+  ],
 });
-const Order = mongoose.model('Order', orderSchema);
-module.exports = Order;
+
+export default orderSchema;

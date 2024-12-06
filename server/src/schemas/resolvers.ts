@@ -72,23 +72,54 @@ const resolvers = {
       if (context.headers) {
         url = new URL(context.headers.referer || "").origin;
       }
-      const order = new Order({ products: args.products });
+
+      if (!context.user) {
+        throw new Error("User not authenticated");
+      }
+
+      const order = {
+        products: args.products,
+        purchaseDate: new Date(),
+      };
+
+      // Push the order to the current user's `orders` field
+      const user = await User.findById(context.user._id);
+      if (user) {
+        user.orders.push(order);
+        await user.save();
+      }
+
+      // Group products by their ID and count the quantity
+      const productQuantities: Record<string, number> = {};
+      order.products.forEach((productId: string) => {
+        productQuantities[productId] = (productQuantities[productId] || 0) + 1;
+      });
+
       const line_items = [];
-      const { products } = await order.populate('products');
+      const productIds = Object.keys(productQuantities); // The list of product IDs
+      const products: any = await Product.find({ _id: { $in: productIds } });  // Fetch the products by their IDs
+
       for (let i = 0; i < products.length; i++) {
-        const product = await stripe.products.create({
-          name: products[i].name,
-          description: products[i].description,
-          // images: [`${url}/images/${products[i].image}`]
+        const product = products[i];
+        const quantity = productQuantities[product._id.toString()]; // Get the quantity for the product
+
+        const finalPrice = product.onSale && product.salePrice ? product.salePrice : product.price;
+
+        // Create the product in Stripe (or find it if already created)
+        const stripeProduct = await stripe.products.create({
+          name: product.name,
+          description: product.description,
+          images: [product.imageUrl]
         });
+
         const price = await stripe.prices.create({
-          product: product.id,
-          unit_amount: products[i].price * 100,
+          product: stripeProduct.id,
+          unit_amount: Math.round(finalPrice * 100),
           currency: 'usd',
         });
         line_items.push({
           price: price.id,
-          quantity: 1
+          quantity
         });
       }
 
@@ -99,7 +130,10 @@ const resolvers = {
         success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${url}/`
       });
-      return { session: session.id };
+      return {
+        sessionId: session.id,
+        url: session.url,
+      };
     }
   },
 

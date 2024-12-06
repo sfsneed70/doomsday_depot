@@ -8,6 +8,7 @@ const typeDefs = gql`
     basket: [BasketItem]
     basketCount: Int
     basketTotal: Float
+    orders: [Order]
   }
 
   type Product {
@@ -75,6 +76,17 @@ const typeDefs = gql`
     productCount: Int
   }
 
+  type Order {
+    _id: ID
+    purchaseDate: String
+    products: [Product]
+  }
+
+  type CheckoutSession {
+    sessionId: String!
+    url: String!
+  }
+
   type Query {
     me: User
 
@@ -84,9 +96,9 @@ const typeDefs = gql`
     categories: [Category]
 
     categoryByName(categoryName: String!): Category
-    categoryNames: [CategoryName] # New Query to fetch all category names
+    categoryNames: [CategoryName]
 
-    # checkout: 
+    checkout(products: [ID!]!): CheckoutSession
   }
 
   type Mutation {
