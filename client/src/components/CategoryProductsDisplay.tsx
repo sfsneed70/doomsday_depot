@@ -3,6 +3,7 @@ import ProductModal from "./ProductModal";
 import { Product } from "../types";
 import { useMutation } from "@apollo/client";
 import { ADD_TO_BASKET } from "../utils/mutations";
+import { gql } from "@apollo/client";
 
 interface CategoryProductsDisplayProps {
   product: Product;
@@ -10,7 +11,33 @@ interface CategoryProductsDisplayProps {
 
 const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ product }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [addBasketItem] = useMutation(ADD_TO_BASKET);
+  const [addBasketItem] = useMutation(ADD_TO_BASKET, {
+    update(cache, { data: { addBasketItem } }) {
+      cache.modify({
+        fields: {
+          basket(existingBasket = []) {
+            const newBasketRef = cache.writeFragment({
+              data: addBasketItem,
+              fragment: gql`
+                fragment NewBasket on Basket {
+                  _id
+                  quantity
+                  product {
+                    _id
+                    name
+                    price
+                    imageUrl
+                  }
+                }
+              `,
+            });
+
+            return [...existingBasket, newBasketRef];
+          },
+        },
+      });
+    }
+  });
   const handleAddToCart = async (product: Product) => {
     await addBasketItem({
       variables: { productId: product._id, quantity: 1 },
