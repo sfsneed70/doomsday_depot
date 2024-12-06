@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import ProductModal from "./ProductModal";
-import { useCart } from "../context/CartContext";
 import { Product } from "../types";
+import { useMutation } from "@apollo/client";
+import { ADD_TO_BASKET } from "../utils/mutations";
 
 interface CategoryProductsDisplayProps {
   product: Product;
@@ -9,10 +10,11 @@ interface CategoryProductsDisplayProps {
 
 const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ product }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const { dispatch } = useCart();
-
-  const handleAddToCart = (product: Product) => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
+  const [addBasketItem] = useMutation(ADD_TO_BASKET);
+  const handleAddToCart = async (product: Product) => {
+    await addBasketItem({
+      variables: { productId: product._id, quantity: 1 },
+    });
   };
 
   return (

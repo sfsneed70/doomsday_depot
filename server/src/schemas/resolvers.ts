@@ -346,13 +346,12 @@ const resolvers = {
             product: productId,
             quantity,
           };
-          await User.findByIdAndUpdate(
+          return await User.findByIdAndUpdate(
             context.user._id,
             { $push: { basket: basketItem } },
             { new: true }
           );
         }
-        return user;
       }
       throw forbiddenException;
     },
