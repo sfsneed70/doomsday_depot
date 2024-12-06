@@ -1,24 +1,14 @@
 import { useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import { Deal } from "../types";
 import 'swiper/swiper-bundle.css';
 import DealItem from "./DealItem";
 import Button from "./Button";
 
 type DealCarouselProps = {
-    deal: Array<{
-        _id: string;
-        name: string;
-        price: number;
-        salePrice: number;
-        rating: number;
-        reviewCount: number;
-        imageUrl: string;
-        onSaleDate: string;
-        description: string;
-        stock: string;
-    }>;
-    onOpenModal: (deal: any) => void;
+    deal: Deal[];
+    onOpenModal: (deal: Deal) => void;
 };
 
 const DealCarousel: React.FC<DealCarouselProps> = ({ deal, onOpenModal }) => {

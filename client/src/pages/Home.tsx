@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import { useMutation } from "@apollo/client";
 import { GET_CATEGORIES, GET_PRODUCTS } from "../utils/queries";
 import { ADD_TO_BASKET } from "../utils/mutations";
-import { Product } from "../types";
+import { Deal } from "../types";
 import CategoryItem from "../components/CategoryItem";
 import DealCarousel from "../components/DealCarousel";
 import DealModal from "../components/DealModal";
@@ -14,7 +14,7 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const [addBasketItem] = useMutation(ADD_TO_BASKET);
-  const handleAddToCart = async (deal: Product) => {
+  const handleAddToCart = async (deal: Deal) => {
     await addBasketItem({
       variables: { productId: deal._id, quantity: 1 },
     });
@@ -29,7 +29,7 @@ const Home = () => {
   if (errorProducts) return <div>Error fetching products: {errorProducts.message}</div>;
 
   // Fetch products for deal carousel
-  const deals = dataProducts.products.filter((product: any) => product.onSale).map((product: any) => ({
+  const deals = dataProducts.products.filter((product: Deal) => product.onSale).map((product: Deal) => ({
     id: product._id,
     name: product.name,
     price: product.price,

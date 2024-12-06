@@ -1,18 +1,8 @@
 import React from "react";
+import { Deal } from "../types";
 
 interface ModalProps {
-    deal: {
-        _id: string;
-        name: string;
-        price: number;
-        salePrice: number;
-        rating: number;
-        reviewCount: number;
-        imageUrl: string;
-        onSaleDate: string;
-        description: string;
-        stock: string;
-    }
+    deal: Deal;
     isOpen: boolean;
     onClose: () => void;
     onAddToCart: (deal: any) => void;

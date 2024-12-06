@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import dayjs from 'dayjs';
+import { Deal } from "../types";
 
 
 type DealItemProps = {
-    deal: {
-        _id: string;
-        name: string;
-        price: number;
-        salePrice: number;
-        rating: number;
-        reviewCount: number;
-        imageUrl: string;
-        onSaleDate: string;
-        description: string;
-        stock: string;
-    };
-    onOpenModal: (deal:any) => void;
+    deal: Deal;
+    onOpenModal: (deal: Deal) => void;
 };
 
 const DealItem: React.FC<DealItemProps> = ({ deal, onOpenModal }) => {
@@ -104,7 +94,7 @@ const DealItem: React.FC<DealItemProps> = ({ deal, onOpenModal }) => {
                 </div>
             </div>
 
-            
+
         </>
     );
 };
