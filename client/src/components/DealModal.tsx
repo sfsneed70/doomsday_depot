@@ -1,5 +1,6 @@
 import React from "react";
 import { Deal } from "../types";
+import auth from "../utils/auth";
 
 interface ModalProps {
     deal: Deal;
@@ -47,15 +48,20 @@ const DealModal: React.FC<ModalProps> = ({ deal, isOpen, onClose, onAddToCart })
                     >
                         Cancel
                     </button>
-                    <button
-                        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500"
-                        onClick={() => {
-                            onAddToCart(deal);
-                            onClose();
-                        }}
-                    >
-                        Add to Cart
-                    </button>
+                    {/* Only show add to cart if logged in. */}
+                    {auth.loggedIn() ? (
+                        <button
+                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500"
+                            onClick={() => {
+                                onAddToCart(deal);
+                                onClose();
+                            }}
+                        >
+                            Add to Cart
+                        </button>
+                    ) : (
+                        <></>
+                    )}
                 </div>
             </div>
         </div>
