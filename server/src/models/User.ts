@@ -13,14 +13,24 @@ interface IUser extends Document {
   basket: IBasketItem[];
   basketCount: number;
   basketTotal: number;
+  taxAmount?: number; 
+  discountAmount?: number; 
+  finalTotal?: number; 
+  promoCode?: string; 
 }
+
+
+const validPromoCodes: Record<string, number> = {
+  SAVE10: 0.1, 
+  SAVE20: 0.2, 
+};
 
 const userSchema = new Schema<IUser>(
   {
     username: {
       type: String,
       required: true,
-      unique: true, // instantly creates a b-tree index on the username field for fast lookups
+      unique: true, // instantly creates a B-tree index on the username field for fast lookups
     },
     email: {
       type: String,
@@ -34,13 +44,16 @@ const userSchema = new Schema<IUser>(
     },
     basket: [basketItemSchema],
     orders: [orderSchema],
+    promoCode: {
+      type: String,
+      default: null, 
+    },
   },
-  // set this to use virtual below
   {
     toJSON: {
       virtuals: true,
     },
-  },
+  }
 );
 
 // hash user password
@@ -59,17 +72,36 @@ userSchema.methods.isCorrectPassword = async function (
   return await bcrypt.compare(password, this.password);
 };
 
-userSchema.virtual("basketCount").get(function (this: IUser) {
-  return this.basket.length;
-});
-
+// Virtual fields
 userSchema.virtual("basketTotal").get(function (this: IUser) {
   let total = 0;
   for (const item of this.basket) {
     total += item.quantity * item.product.price;
   }
-  return total.toFixed(2);
+  return total; 
 });
+
+userSchema.virtual("taxAmount").get(function (this: IUser) {
+  const basketTotal = this.basketTotal || 0; 
+  const taxRate = 0.09; // 9% tax
+  return Number((basketTotal * taxRate).toFixed(2)); 
+});
+
+userSchema.virtual("discountAmount").get(function (this: IUser) {
+  if (this.promoCode && this.promoCode in validPromoCodes) {
+    const discount = validPromoCodes[this.promoCode]; 
+    return Number((this.basketTotal * discount).toFixed(2)); 
+  }
+  return 0; // No discount given
+});
+
+userSchema.virtual("finalTotal").get(function (this: IUser) {
+  const basketTotal = this.basketTotal || 0; 
+  const taxAmount = this.taxAmount || 0; 
+  const discountAmount = this.discountAmount || 0; 
+  return Number((basketTotal + taxAmount - discountAmount).toFixed(2)); 
+});
+
 
 const User = model<IUser>("User", userSchema);
 

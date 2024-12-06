@@ -78,391 +78,388 @@ const resolvers = {
         throw new Error("User not authenticated");
       }
 
-      const user = await User.findById(context.user._id);
-      if (!user) {
-        throw new GraphQLError("User not found.", {
-          extensions: { code: "NOT_FOUND" },
-        });
-      }
-
-      // Create a new order subdocument
-      const order = user.orders.create({
+      const order: Partial<IOrder> = {
         products: args.products,
         purchaseDate: new Date(),
-      });
+      } as IOrder;
 
-      user.orders.push(order); // Push the new order to the user's orders array
-      await user.save(); // Save the user document
+      // Push the order to the current user's `orders` field
+      const user = await User.findById(context.user._id);
+      if (user) {
+        user.orders.push(order as any);
+        await user.save();
+      }
 
       // Group products by their ID and count the quantity
       const productQuantities: Record<string, number> = {};
-      order.products.forEach((productId: string) => {
+      order.products?.forEach((productId: any) => {
         productQuantities[productId] = (productQuantities[productId] || 0) + 1;
       });
 
       const line_items = [];
-      const productIds = Object.keys(productQuantities);
-      const products: any = await Product.find({ _id: { $in: productIds } });
+      const productIds = Object.keys(productQuantities); // The list of product IDs
+      const products: any = await Product.find({ _id: { $in: productIds } });  // Fetch the products by their IDs
 
       for (let i = 0; i < products.length; i++) {
         const product = products[i];
-        const quantity = productQuantities[product._id.toString()];
+        const quantity = productQuantities[product._id.toString()]; // Get the quantity for the product
+
         const finalPrice = product.onSale && product.salePrice ? product.salePrice : product.price;
 
+        // Create the product in Stripe (or find it if already created)
         const stripeProduct = await stripe.products.create({
           name: product.name,
           description: product.description,
-          images: [product.imageUrl],
+          images: [product.imageUrl]
         });
 
         const price = await stripe.prices.create({
           product: stripeProduct.id,
           unit_amount: Math.round(finalPrice * 100),
-          currency: "usd",
+          currency: 'usd',
         });
-
         line_items.push({
           price: price.id,
-          quantity,
+          quantity
         });
       }
 
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
+        payment_method_types: ['card'],
         line_items,
-        mode: "payment",
+        mode: 'payment',
         success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${url}/`,
+        cancel_url: `${url}/`
       });
-
       return {
         sessionId: session.id,
         url: session.url,
       };
+    }
+  },
+
+  Mutation: {
+    addUser: async (
+      _parent: any,
+      args: any
+    ): Promise<{ token: string; user: IUserDocument }> => {
+      const user = await User.create(args);
+      const token = signToken(user.username, user.email, user._id);
+
+      return { token, user: user as IUserDocument };
     },
 
-    Mutation: {
-      addUser: async (
-        _parent: any,
-        args: any
-      ): Promise<{ token: string; user: IUserDocument }> => {
-        const user = await User.create(args);
-        const token = signToken(user.username, user.email, user._id);
+    login: async (
+      _parent: any,
+      { email, password }: { email: string; password: string }
+    ): Promise<{ token: string; user: IUserDocument }> => {
+      const user = await User.findOne({ email });
 
-        return { token, user: user as IUserDocument };
-      },
+      if (!user || !(await user.isCorrectPassword(password))) {
+        throw new GraphQLError("Incorrect credentials. Please try again.", {
+          extensions: {
+            code: "FORBIDDEN",
+          },
+        });
+      }
 
-      login: async (
-        _parent: any,
-        { email, password }: { email: string; password: string }
-      ): Promise<{ token: string; user: IUserDocument }> => {
-        const user = await User.findOne({ email });
+      const token = signToken(user.username, user.email, user._id);
+      return { token, user: user as IUserDocument };
+    },
 
-        if (!user || !(await user.isCorrectPassword(password))) {
-          throw new GraphQLError("Incorrect credentials. Please try again.", {
+    addProduct: async (
+      _parent: any,
+      { productData }: { productData: IProductInput },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.create({
+          ...productData,
+        });
+
+        return product;
+      }
+      throw forbiddenException;
+    },
+
+    removeProduct: async (
+      _parent: any,
+      { productId }: { productId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findByIdAndDelete(productId);
+        return product;
+      }
+      throw forbiddenException;
+    },
+
+    addStock: async (
+      _parent: any,
+      { productId, quantity }: { productId: string; quantity: number },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
             extensions: {
-              code: "FORBIDDEN",
+              code: "NOT_FOUND",
             },
           });
         }
-
-        const token = signToken(user.username, user.email, user._id);
-        return { token, user: user as IUserDocument };
-      },
-
-      addProduct: async (
-        _parent: any,
-        { productData }: { productData: IProductInput },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.create({
-            ...productData,
-          });
-
-          return product;
-        }
-        throw forbiddenException;
-      },
-
-      removeProduct: async (
-        _parent: any,
-        { productId }: { productId: string },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findByIdAndDelete(productId);
-          return product;
-        }
-        throw forbiddenException;
-      },
-
-      addStock: async (
-        _parent: any,
-        { productId, quantity }: { productId: string; quantity: number },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-          product.stock += quantity;
-          await product.save();
-          return product;
-        }
-        throw forbiddenException;
-      },
-
-      removeStock: async (
-        _parent: any,
-        { productId, quantity }: { productId: string; quantity: number },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-          if (product.stock >= quantity) {
-            product.stock -= quantity;
-            await product.save();
-          } else {
-            throw new GraphQLError("Insufficient stock.", {
-              extensions: {
-                code: "BAD_REQUEST",
-              },
-            });
-          }
-          return product;
-        }
-        throw forbiddenException;
-      },
-
-      addCategory: async (
-        _parent: any,
-        { categoryData }: { categoryData: { name: string; imageUrl: string } },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const category = await Category.create(categoryData);
-          return category;
-        }
-        throw forbiddenException;
-      },
-
-      removeCategory: async (
-        _parent: any,
-        { categoryId }: { categoryId: string },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const category = await Category.findByIdAndDelete(categoryId);
-          return category;
-        }
-        throw forbiddenException;
-      },
-
-      addProductToCategory: async (
-        _parent: any,
-        { productId, categoryId }: { productId: string; categoryId: string },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const category = await Category.findById(categoryId);
-          if (!category) {
-            throw new GraphQLError("Category not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-
-          await Category.findByIdAndUpdate(
-            categoryId,
-            { $push: { products: productId } },
-            { new: true }
-          );
-          return category;
-        }
-        throw forbiddenException;
-      },
-
-      addReview: async (
-        _parent: any,
-        {
-          productId,
-          review,
-          rating,
-        }: { productId: string; review: string; rating: number },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-
-          for (const item of product.reviews) {
-            // Check if the user has already reviewed the product
-            if (item.username === context.user.username) {
-              throw new GraphQLError("You have already reviewed this product.", {
-                extensions: {
-                  code: "FORBIDDEN",
-                },
-              });
-            }
-          }
-
-          // Otherwise, add the review
-          await Product.findByIdAndUpdate(
-            productId,
-            {
-              $push: {
-                reviews: {
-                  review,
-                  rating,
-                  username: context.user.username,
-                },
-              },
-            },
-            { new: true }
-          );
-          return product;
-        }
-        throw forbiddenException;
-      },
-
-      editReview: async (
-        _parent: any,
-        {
-          productId,
-          review,
-          rating,
-        }: {
-          productId: string;
-          review: string;
-          rating: number;
-        },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-
-          for (const item of product.reviews) {
-            // Find the review by the user and update it
-            if (item.username === context.user.username) {
-              item.review = review;
-              item.rating = rating;
-              await product.save();
-              return product;
-            }
-          }
-        }
-        throw forbiddenException;
-      },
-
-      addBasketItem: async (
-        _parent: any,
-        { productId, quantity }: { productId: string; quantity: number },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-
-          const user = await User.findById(context.user._id);
-          if (user) {
-            // If the user already has the product in their basket, update the quantity
-            for (const item of user.basket) {
-              if (item.product.toString() === productId) {
-                item.quantity += quantity;
-                await user.save();
-                return user;
-              }
-            }
-
-            // Otherwise, add the product to the basket
-            const basketItem = {
-              product: productId,
-              quantity,
-            };
-            return await User.findByIdAndUpdate(
-              context.user._id,
-              { $push: { basket: basketItem } },
-              { new: true }
-            );
-          }
-        }
-        throw forbiddenException;
-      },
-
-      removeBasketItem: async (
-        _parent: any,
-        { productId }: { productId: string },
-        context: IUserContext
-      ) => {
-        if (context.user) {
-          const product = await Product.findById(productId);
-          if (!product) {
-            throw new GraphQLError("Product not found.", {
-              extensions: {
-                code: "NOT_FOUND",
-              },
-            });
-          }
-
-          const user = await User.findById(context.user._id);
-          if (user) {
-            // If the user already has the product in their basket, remove it
-            for (const item of user.basket) {
-              if (item.product.toString() === productId) {
-                await User.findByIdAndUpdate(context.user._id, {
-                  $pull: { basket: { product: productId } },
-                });
-                return user;
-              }
-            }
-          }
-          return user;
-        }
-        throw forbiddenException;
-      },
+        product.stock += quantity;
+        await product.save();
+        return product;
+      }
+      throw forbiddenException;
     },
-  };
 
-  export default resolvers;
+    removeStock: async (
+      _parent: any,
+      { productId, quantity }: { productId: string; quantity: number },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        if (product.stock >= quantity) {
+          product.stock -= quantity;
+          await product.save();
+        } else {
+          throw new GraphQLError("Insufficient stock.", {
+            extensions: {
+              code: "BAD_REQUEST",
+            },
+          });
+        }
+        return product;
+      }
+      throw forbiddenException;
+    },
+
+    addCategory: async (
+      _parent: any,
+      { categoryData }: { categoryData: { name: string; imageUrl: string } },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const category = await Category.create(categoryData);
+        return category;
+      }
+      throw forbiddenException;
+    },
+
+    removeCategory: async (
+      _parent: any,
+      { categoryId }: { categoryId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const category = await Category.findByIdAndDelete(categoryId);
+        return category;
+      }
+      throw forbiddenException;
+    },
+
+    addProductToCategory: async (
+      _parent: any,
+      { productId, categoryId }: { productId: string; categoryId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const category = await Category.findById(categoryId);
+        if (!category) {
+          throw new GraphQLError("Category not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        await Category.findByIdAndUpdate(
+          categoryId,
+          { $push: { products: productId } },
+          { new: true }
+        );
+        return category;
+      }
+      throw forbiddenException;
+    },
+
+    addReview: async (
+      _parent: any,
+      {
+        productId,
+        review,
+        rating,
+      }: { productId: string; review: string; rating: number },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        for (const item of product.reviews) {
+          // Check if the user has already reviewed the product
+          if (item.username === context.user.username) {
+            throw new GraphQLError("You have already reviewed this product.", {
+              extensions: {
+                code: "FORBIDDEN",
+              },
+            });
+          }
+        }
+
+        // Otherwise, add the review
+        await Product.findByIdAndUpdate(
+          productId,
+          {
+            $push: {
+              reviews: {
+                review,
+                rating,
+                username: context.user.username,
+              },
+            },
+          },
+          { new: true }
+        );
+        return product;
+      }
+      throw forbiddenException;
+    },
+
+    editReview: async (
+      _parent: any,
+      {
+        productId,
+        review,
+        rating,
+      }: {
+        productId: string;
+        review: string;
+        rating: number;
+      },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        for (const item of product.reviews) {
+          // Find the review by the user and update it
+          if (item.username === context.user.username) {
+            item.review = review;
+            item.rating = rating;
+            await product.save();
+            return product;
+          }
+        }
+      }
+      throw forbiddenException;
+    },
+
+    addBasketItem: async (
+      _parent: any,
+      { productId, quantity }: { productId: string; quantity: number },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        const user = await User.findById(context.user._id);
+        if (user) {
+          // If the user already has the product in their basket, update the quantity
+          for (const item of user.basket) {
+            if (item.product.toString() === productId) {
+              item.quantity += quantity;
+              await user.save();
+              return user;
+            }
+          }
+
+          // Otherwise, add the product to the basket
+          const basketItem = {
+            product: productId,
+            quantity,
+          };
+          return await User.findByIdAndUpdate(
+            context.user._id,
+            { $push: { basket: basketItem } },
+            { new: true }
+          );
+        }
+      }
+      throw forbiddenException;
+    },
+
+    removeBasketItem: async (
+      _parent: any,
+      { productId }: { productId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+
+        const user = await User.findById(context.user._id);
+        if (user) {
+          // If the user already has the product in their basket, remove it
+          for (const item of user.basket) {
+            if (item.product.toString() === productId) {
+              await User.findByIdAndUpdate(context.user._id, {
+                $pull: { basket: { product: productId } },
+              });
+              return user;
+            }
+          }
+        }
+        return user;
+      }
+      throw forbiddenException;
+    },
+  },
+};
+
+export default resolvers;
