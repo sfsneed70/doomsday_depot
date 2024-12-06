@@ -30,7 +30,7 @@ const Home = () => {
 
   // Fetch products for deal carousel
   const deals = dataProducts.products.filter((product: Deal) => product.onSale).map((product: Deal) => ({
-    id: product._id,
+    _id: product._id,
     name: product.name,
     price: product.price,
     salePrice: product.salePrice,
