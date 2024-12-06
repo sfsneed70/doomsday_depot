@@ -83,8 +83,8 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
                     />
 
                     {/* Display countdown */}
-                    <div className="absolute top-0 left-0 right-0 p-4 z-20 bg-black bg-opacity-50 flex items-center justify-between">
-                        <p className="text-lg text-red-500 font-semibold">
+                    <div className="absolute top-0 left-0 right-0 p-4 z-20 flex items-center justify-end">
+                        <p className="text-lg text-red-500 font-semibold" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)' }}>
                             Sale ends: {countdown}
                         </p>
                     </div>
