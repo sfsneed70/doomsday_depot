@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
 import { Star } from "lucide-react";
 import dayjs from 'dayjs';
+import { Deal } from "../types";
 
 
 type DealItemProps = {
-    deal: {
-        id: number;
-        name: string;
-        price: number;
-        salePrice: number;
-        rating: number;
-        reviewCount: number;
-        imageUrl: string;
-        onSaleDate: string;
-    }
+    deal: Deal;
+    onOpenModal: (deal: Deal) => void;
 };
 
-const DealItem: React.FC<DealItemProps> = ({ deal }) => {
+const DealItem: React.FC<DealItemProps> = ({ deal, onOpenModal }) => {
     const formattedRating = deal.rating % 1 === 0 ? deal.rating.toFixed(0) : deal.rating.toFixed(1);
     const [countdown, setCountdown] = useState<string>('');
 
@@ -50,29 +42,10 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
         return () => clearInterval(interval);
     }, [deal.onSaleDate]);
 
-    // const fullStars = Math.floor(deal.rating);
-    // const halfStar = deal.rating % 1 >= 0.5;
-    // const emptyStars = 5 - Math.ceil(deal.rating);
-
-    // {/* Render full stars */ }
-    // {
-    //     Array.from({ length: fullStars }, (_, index) => (
-    //         <Star key={index} fill="yellow" strokeWidth={0} className="h-5 w-5" />
-    //     ))
-    // }
-    // {/* Render half star if needed */ }
-    // { halfStar && <StarHalf fill="yellow" strokeWidth={0} className="h-5 w-5" /> }
-    // {/* Render empty stars */ }
-    // {
-    //     Array.from({ length: emptyStars }, (_, index) => (
-    //         <Star key={index + fullStars + (halfStar ? 1 : 0)} fill="#111" strokeWidth={0} className="h-5 w-5" />
-    //     ))
-    // }
-    // <span className="ml-2 text-sm text-gray-300">({deal.rating})</span>
-
     return (
-        <div className="relative overflow-hidden h-96 w-full rounded-lg group bg-white shadow-lg">
-            <NavLink to={`/product/${deal.name}`} className="block w-full h-full">
+        <>
+            <div className="relative overflow-hidden h-96 w-full rounded-lg group bg-white shadow-lg"
+                onClick={() => onOpenModal(deal)}>
                 <div className="w-full h-full cursor-pointer">
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 opacity-50 z-10" />
                     <img
@@ -117,11 +90,12 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
                                 {formattedRating} <Star fill="yellow" className="inline h-5 w-5 text-yellow-400" /> ({deal.reviewCount.toLocaleString()})
                             </p>
                         </div>
-
                     </div>
                 </div>
-            </NavLink>
-        </div>
+            </div>
+
+
+        </>
     );
 };
 
