@@ -7,9 +7,10 @@ import { useNavigate } from "react-router-dom";
 
 interface RegisterFormProps {
     onSuccess: () => void;
+    setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
+const RegisterForm = ({ onSuccess, setLoggedIn }: RegisterFormProps) => {
     const [formData, setFormData] = useState({
         email: "",
         username: "",
@@ -44,6 +45,7 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         try {
             const { data } = await addUser({ variables: { ...formData } });
             Auth.login(data.addUser.token);
+            setLoggedIn(true);
             onSuccess();
             navigate("/");
         } catch (e: unknown) {

@@ -15,7 +15,7 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
   const [cart, setCart] = useState<string[]>([]);
 
-  const { data, error } = useQuery(GET_ME);
+  const { data, refetch } = useQuery(GET_ME);
 
   const logout = () => {
     Auth.logout();
@@ -24,13 +24,17 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
   };
 
   useEffect(() => {
+    if (loggedIn && !data) {
+      refetch();
+    }
+
     if (data && data.me && data.me.basket) {
       const productIds = data.me.basket.map((item: { product: { _id: string } }) => item.product._id);
       setCart(productIds);
     }
-  }, [data]);
+  }, [data, loggedIn, refetch]);
 
-  if (error) return <div>Error loading user data</div>
+  // if (error) return <div>Error loading user data</div>
 
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
