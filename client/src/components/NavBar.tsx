@@ -1,6 +1,10 @@
+import React, { useEffect, useState } from "react";
 import { ShoppingCart, UserPlus, LogIn, LogOut } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom";
 import Auth from "../utils/auth";
+import { useQuery } from "@apollo/client";
+import { GET_ME } from "../utils/queries";
+
 
 type NavBarProps = {
   loggedIn: boolean;
@@ -9,7 +13,9 @@ type NavBarProps = {
 
 const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
-  const cart = ["items", "in", "cart"]; //implement cart still
+  const [cart, setCart] = useState<string[]>([]);
+
+  const { data, error } = useQuery(GET_ME);
 
   const logout = () => {
     Auth.logout();
@@ -17,19 +23,28 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
     navigate("/");
   };
 
+  useEffect(() => {
+    if (data && data.me && data.me.basket) {
+      const productIds = data.me.basket.map((item: { product: { _id: string } }) => item.product._id);
+      setCart(productIds);
+    }
+  }, [data]);
+
+  if (error) return <div>Error loading user data</div>
+
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-wrap items-center justify-between">
           {/* Brand */}
-            <NavLink
+          <NavLink
             to="/"
             className="text-2xl font-bold text-emerald-400 flex items-center space-x-2 hover:text-emerald-300"
-            >
+          >
             <img src="/apocalypse.png" alt="Apocalypse Icon" className="w-6 h-6" />
             <span>DOOMSDAY DEPOT</span>
             <img src="/apocalypse.png" alt="Apocalypse Icon" className="w-6 h-6" />
-            </NavLink>
+          </NavLink>
 
           {/* Menu */}
           <nav className="flex items-center gap-4">
