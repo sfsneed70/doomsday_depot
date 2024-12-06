@@ -8,5 +8,4 @@ export default interface IProductDocument {
   price: number;
   stock: number;
   dateCreated: Date | string;
-  salePrice?: number;
 }
