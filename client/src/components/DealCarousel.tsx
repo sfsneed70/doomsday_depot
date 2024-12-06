@@ -49,15 +49,15 @@ const DealCarousel: React.FC<DealCarouselProps> = ({ deal, onOpenModal }) => {
                     },
                 }}
             >
-                {deal.map((deal) => (
-                    <SwiperSlide key={deal._id}>
-                        <DealItem deal={deal} onOpenModal={onOpenModal} />
+                {deal.map((dealItem) => (
+                    <SwiperSlide key={dealItem.name}> 
+                        <DealItem deal={dealItem} onOpenModal={onOpenModal} />
                     </SwiperSlide>
                 ))}
             </Swiper>
 
             {/* Navigation Buttons */}
-            <div className="flex justify-end mt-4">
+            < div className="flex justify-end mt-4" >
                 <Button
                     ref={prevRef}
                     text="Prev"
@@ -68,7 +68,7 @@ const DealCarousel: React.FC<DealCarouselProps> = ({ deal, onOpenModal }) => {
                     text="Next"
                 />
             </div>
-        </div>
+        </div >
     );
 };
 
