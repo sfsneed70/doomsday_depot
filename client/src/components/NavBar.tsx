@@ -22,14 +22,10 @@ const NavBar: React.FC = () => {
   };
 
   useEffect(() => {
-    const token = Auth.loggedIn();
-    if (token) {
-      setLoggedIn(true);
-      if (!data) refetch();
-    } else {
-      setLoggedIn(false);
+    if (loggedIn) {
+      refetch();
     }
-  }, [data, refetch, setLoggedIn]);
+  }, [loggedIn, refetch]);
 
 
   const basketCount = data?.me?.basketCount || 0;
