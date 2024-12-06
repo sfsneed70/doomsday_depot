@@ -3,10 +3,10 @@ import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { LOGIN_USER } from "../utils/mutations";
 import Auth from "../utils/auth";
-import { useLoggedIn } from "../App";
+import {useAuth } from "../utils/AuthContext";
 
 const LoginForm = () => {
-    const [_loggedIn, setLoggedIn] = useLoggedIn();
+    const {setLoggedIn} = useAuth();
     const [formData, setFormData] = useState({
         email: "",
         password: "",

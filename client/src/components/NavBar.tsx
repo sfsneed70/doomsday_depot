@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../utils/AuthContext";
 import { ShoppingCart, UserPlus, LogIn, LogOut } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom";
 import Auth from "../utils/auth";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 
-
-type NavBarProps = {
-  loggedIn: boolean;
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
+const NavBar: React.FC = () => {
+  const {loggedIn, setLoggedIn} = useAuth();
   const navigate = useNavigate();
   const [cart, setCart] = useState<string[]>([]);
 
@@ -33,8 +29,6 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
       setCart(productIds);
     }
   }, [data, loggedIn, refetch]);
-
-  // if (error) return <div>Error loading user data</div>
 
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
