@@ -4,10 +4,6 @@ import { ArrowRight } from "lucide-react";
 import RegisterForm from "../components/RegisterForm";
 
 const SignUpPage = () => {
-  const handleSuccess = () => {
-    console.log("User registered successfully!");
-    // Add navigation or other actions after success
-  };
 
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -29,7 +25,7 @@ const SignUpPage = () => {
         transition={{ duration: 0.8, delay: 0.2 }}
       >
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <RegisterForm onSuccess={handleSuccess} />
+          <RegisterForm />
 
           <p className="mt-4 text-center text-sm text-gray-400">
             Already have an account?{" "}

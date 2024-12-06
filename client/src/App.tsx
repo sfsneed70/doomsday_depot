@@ -8,9 +8,9 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
-import { Toaster } from "react-hot-toast";
 import Navbar from "./components/NavBar";
 import Auth from "./utils/auth";
+import { AuthProvider } from "./utils/AuthContext";
 
 import Chatbot from "./components/Chatbot";
 
@@ -54,13 +54,14 @@ function App() {
         </div>
 
         <div className='relative z-50 pt-20'>
-          <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-          <Chatbot />
-          <div >
-            <Outlet context={[loggedIn, setLoggedIn] satisfies AuthContextType} />
-          </div>
+          <AuthProvider>
+            <Navbar />
+            <Chatbot />
+            <div >
+              <Outlet context={[loggedIn, setLoggedIn] satisfies AuthContextType} />
+            </div>
+          </AuthProvider>
         </div>
-        <Toaster />
       </div>
 
     </ApolloProvider>

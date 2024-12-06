@@ -118,6 +118,7 @@ const typeDefs = gql`
     editReview(productId: ID!, review: String!, rating: Int!): Product
     addBasketItem(productId: ID!, quantity: Int!): User
     removeBasketItem(productId: ID!): User
+    decrementBasketItem(productId: ID!): User
   }
 `;
 

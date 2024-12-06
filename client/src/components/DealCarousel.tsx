@@ -1,32 +1,25 @@
 import { useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import { Deal } from "../types";
 import 'swiper/swiper-bundle.css';
 import DealItem from "./DealItem";
 import Button from "./Button";
 
 type DealCarouselProps = {
-    deal: Array<{
-        id: number;
-        name: string;
-        price: number;
-        salePrice: number;
-        rating: number;
-        reviewCount: number;
-        imageUrl: string;
-        onSaleDate: string;
-    }>;
+    deal: Deal[];
+    onOpenModal: (deal: Deal) => void;
 };
 
-const DealCarousel: React.FC<DealCarouselProps> = ({ deal }) => {
+const DealCarousel: React.FC<DealCarouselProps> = ({ deal, onOpenModal }) => {
     const prevRef = useRef<HTMLButtonElement>(null);
     const nextRef = useRef<HTMLButtonElement>(null);
     const swiperInstance = useRef<any>(null);
 
     useEffect(() => {
-            swiperInstance.current!.params.navigation.prevEl = prevRef.current;
-            swiperInstance.current!.params.navigation.nextEl = nextRef.current;
-            swiperInstance.current!.navigation.init();
+        swiperInstance.current!.params.navigation.prevEl = prevRef.current;
+        swiperInstance.current!.params.navigation.nextEl = nextRef.current;
+        swiperInstance.current!.navigation.init();
     }, []);
 
     return (
@@ -56,26 +49,26 @@ const DealCarousel: React.FC<DealCarouselProps> = ({ deal }) => {
                     },
                 }}
             >
-                {deal.map((deal) => (
-                    <SwiperSlide key={deal.id}>
-                        <DealItem deal={deal} />
+                {deal.map((dealItem) => (
+                    <SwiperSlide key={dealItem.name}> 
+                        <DealItem deal={dealItem} onOpenModal={onOpenModal} />
                     </SwiperSlide>
                 ))}
             </Swiper>
 
             {/* Navigation Buttons */}
-            <div className="flex justify-end mt-4">
+            < div className="flex justify-end mt-4" >
                 <Button
                     ref={prevRef}
                     text="Prev"
                     className="mr-4"
-                    />
-                <Button 
+                />
+                <Button
                     ref={nextRef}
                     text="Next"
                 />
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -1,21 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useAuth } from "../utils/AuthContext";
 import { ShoppingCart, UserPlus, LogIn, LogOut } from "lucide-react"
 import { NavLink, useNavigate } from "react-router-dom";
 import Auth from "../utils/auth";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 
-
-type NavBarProps = {
-  loggedIn: boolean;
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
+const NavBar: React.FC = () => {
+  const { loggedIn, setLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [cart, setCart] = useState<string[]>([]);
 
-  const { data, error } = useQuery(GET_ME);
+  // const { data, refetch } = useQuery(GET_ME);
+  const { data, refetch } = useQuery(GET_ME, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const logout = () => {
     Auth.logout();
@@ -23,14 +21,21 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
     navigate("/");
   };
 
+  // Initialize loggedIn state based on the token in localStorage
   useEffect(() => {
-    if (data && data.me && data.me.basket) {
-      const productIds = data.me.basket.map((item: { product: { _id: string } }) => item.product._id);
-      setCart(productIds);
-    }
-  }, [data]);
+    const tokenExists = Auth.loggedIn();
+    setLoggedIn(tokenExists);
+  }, [setLoggedIn]);
 
-  if (error) return <div>Error loading user data</div>
+  // Refetch user data when loggedIn state changes
+  useEffect(() => {
+    if (loggedIn) {
+      refetch();
+    }
+  }, [loggedIn, refetch]);
+
+
+  const basketCount = data?.me?.basketCount || 0;
 
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
@@ -63,12 +68,12 @@ const NavBar: React.FC<NavBarProps> = ({ loggedIn, setLoggedIn }) => {
                   className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out"
                 >
                   <ShoppingCart className="mr-1" size={25} />
-                  {cart.length > 0 && (
+                  {basketCount > 0 && (
                     <span
                       className='absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
 									text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out'
                     >
-                      {cart.length}
+                      {basketCount}
                     </span>
                   )}
                 </NavLink>
