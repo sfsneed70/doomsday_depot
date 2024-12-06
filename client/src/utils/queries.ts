@@ -7,6 +7,7 @@ export const GET_ME = gql`
       username
       email
       basket {
+        _id
         product {
           _id
           name

@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { GET_ME } from "../utils/queries";
-import { ADD_TO_BASKET, REMOVE_FROM_BASKET } from "../utils/mutations";
+import { ADD_TO_BASKET, DECREMENT_BASKET_ITEM } from "../utils/mutations";
+import { IBasketItem } from "../interfaces/BasketItem";
 
 const Cart: React.FC = () => {
-  const { loading, error, data, refetch } = useQuery(GET_ME);
+  // const { loading, error, data, refetch } = useQuery(GET_ME);
+  const { loading, data, error, refetch } = useQuery(GET_ME, {
+    fetchPolicy: "cache-and-network",
+  });
+
   const [addToBasket] = useMutation(ADD_TO_BASKET);
-  const [removeFromBasket] = useMutation(REMOVE_FROM_BASKET);
+  const [decrementBasketItem] = useMutation(DECREMENT_BASKET_ITEM);
   const [basket, setBasket] = useState([]);
   const [basketTotal, setBasketTotal] = useState(0);
   const navigate = useNavigate();
@@ -30,7 +35,7 @@ const Cart: React.FC = () => {
 
   const handleRemoveFromBasket = async (productId: string) => {
     try {
-      await removeFromBasket({ variables: { productId } });
+      await decrementBasketItem({ variables: { productId } });
       refetch();
     } catch (err) {
       console.error(err);
@@ -51,7 +56,7 @@ const Cart: React.FC = () => {
       {basket.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="cart-items space-y-6">
-            {basket.map((item: any) => (
+            {basket.map((item: IBasketItem) => (
               <div
                 key={item.product._id}
                 className="bg-gray-800 rounded-lg shadow-lg flex items-center p-4"

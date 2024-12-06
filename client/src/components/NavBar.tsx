@@ -11,7 +11,10 @@ const NavBar: React.FC = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState<string[]>([]);
 
-  const { data, refetch } = useQuery(GET_ME);
+  // const { data, refetch } = useQuery(GET_ME);
+  const { data, refetch } = useQuery(GET_ME, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const logout = () => {
     Auth.logout();
