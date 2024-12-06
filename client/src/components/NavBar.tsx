@@ -21,6 +21,13 @@ const NavBar: React.FC = () => {
     navigate("/");
   };
 
+  // Initialize loggedIn state based on the token in localStorage
+  useEffect(() => {
+    const tokenExists = Auth.loggedIn();
+    setLoggedIn(tokenExists);
+  }, [setLoggedIn]);
+
+  // Refetch user data when loggedIn state changes
   useEffect(() => {
     if (loggedIn) {
       refetch();
