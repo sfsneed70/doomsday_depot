@@ -1,5 +1,6 @@
 import React from "react";
 import { Product } from "../types"; // Import shared Product type
+import auth from "../utils/auth";
 
 interface ModalProps {
   product: Product | null;
@@ -39,24 +40,29 @@ const ProductModal: React.FC<ModalProps> = ({ product, isOpen, onClose, onAddToC
           </p>
         </div>
 
-        {/* Modal Buttons */}
-        <div className="flex justify-end space-x-2">
-          <button
-            className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500"
-            onClick={() => {
-              onAddToCart(product);
-              onClose();
-            }}
-          >
-            Add to Cart
-          </button>
-        </div>
+          {/* Modal Buttons */}
+          <div className="flex justify-end space-x-2">
+            <button
+              className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            {/* Only show add to cart if logged in. */}
+            {auth.loggedIn() ? (
+            <button
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500"
+              onClick={() => {
+                onAddToCart(product);
+                onClose();
+              }}
+            >
+              Add to Cart
+            </button>
+            ) : (
+              <></>
+            )}
+          </div>
       </div>
     </div>
   );

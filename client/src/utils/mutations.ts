@@ -41,6 +41,7 @@ export const ADD_REVIEW = gql`
 export const ADD_TO_BASKET = gql`
   mutation AddBasketItem($productId: ID!, $quantity: Int!) {
     addBasketItem(productId: $productId, quantity: $quantity) {
+      _id
       basket {
         product {
           _id
@@ -52,16 +53,27 @@ export const ADD_TO_BASKET = gql`
 `;
 
 export const REMOVE_FROM_BASKET = gql`
-  mutation RemoveFromBasket($productId: ID!) {
-    removeFromBasket(productId: $productId) {
+  mutation RemoveBasketItem($productId: ID!) {
+    removeBasketItem(productId: $productId) {
       _id
-      product {
-        name
-        description
-        price
-        stock
+      basket {
+        product {
+          _id
+        }
       }
-      quantity
+    }
+  }
+`;
+
+export const DECREMENT_BASKET_ITEM = gql`
+  mutation DecrementBasketItem($productId: ID!) {
+    decrementBasketItem(productId: $productId) {
+      _id
+      basket {
+        product {
+          _id
+        }
+      }
     }
   }
 `;
