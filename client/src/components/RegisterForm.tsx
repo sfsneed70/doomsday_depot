@@ -4,13 +4,11 @@ import { ADD_USER } from "../utils/mutations";
 import Auth from "../utils/auth";
 import validator from "validator";
 import { useNavigate } from "react-router-dom";
+import {useAuth} from "../utils/AuthContext";
 
-interface RegisterFormProps {
-    onSuccess: () => void;
-    // setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
+const RegisterForm = () => {
+    const {setLoggedIn} = useAuth();
     const [formData, setFormData] = useState({
         email: "",
         username: "",
@@ -45,8 +43,7 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         try {
             const { data } = await addUser({ variables: { ...formData } });
             Auth.login(data.addUser.token);
-            // setLoggedIn(true);
-            onSuccess();
+            setLoggedIn(true);
             navigate("/");
         } catch (e: unknown) {
             if (e instanceof Error) {
