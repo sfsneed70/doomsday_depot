@@ -1,16 +1,16 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import RegisterForm from "../components/RegisterForm";
 
 const SignUpPage = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const [loggedIn, setLoggedIn] = useState(false);
 
   const handleSuccess = () => {
     console.log("User registered successfully!");
     // Additional actions after success
-    setLoggedIn(true); // Update loggedIn state after successful registration
+    // setLoggedIn(true); // Update loggedIn state after successful registration
   };
 
   return (
@@ -33,7 +33,7 @@ const SignUpPage = () => {
         transition={{ duration: 0.8, delay: 0.2 }}
       >
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <RegisterForm onSuccess={handleSuccess} setLoggedIn={setLoggedIn} /> {/* Pass setLoggedIn here */}
+          <RegisterForm onSuccess={handleSuccess} /> {/* Pass setLoggedIn here */}
 
           <p className="mt-4 text-center text-sm text-gray-400">
             Already have an account?{" "}

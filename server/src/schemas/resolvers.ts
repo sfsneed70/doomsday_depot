@@ -376,14 +376,46 @@ const resolvers = {
           // If the user already has the product in their basket, remove it
           for (const item of user.basket) {
             if (item.product.toString() === productId) {
-              await User.findByIdAndUpdate(context.user._id, {
+              return await User.findByIdAndUpdate(context.user._id, {
                 $pull: { basket: { product: productId } },
-              });
-              return user;
+              }, { new: true });
             }
           }
         }
-        return user;
+        // return user;
+      }
+      throw forbiddenException;
+    },
+
+    decrementBasketItem: async (
+      _parent: any,
+      { productId }: { productId: string },
+      context: IUserContext
+    ) => {
+      if (context.user) {
+        const product = await Product.findById(productId);
+        if (!product) {
+          throw new GraphQLError("Product not found.", {
+            extensions: {
+              code: "NOT_FOUND",
+            },
+          });
+        }
+        const user = await User.findById(context.user._id);
+        if (user) {
+          for (const item of user.basket) {
+            if (item.product.toString() === productId) {
+              if (item.quantity > 1) {
+                item.quantity -= 1;
+                await user.save();
+                return user;
+              }
+              return await User.findByIdAndUpdate(context.user._id, {
+                $pull: { basket: { product: productId } },
+              }, { new: true });
+            }
+          }
+        }
       }
       throw forbiddenException;
     },
