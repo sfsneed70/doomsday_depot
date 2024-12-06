@@ -31,7 +31,7 @@ const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ produ
         <div className="absolute bottom-0 left-0 right-0 p-4 z-20 bg-black bg-opacity-50">
           <h3 className="text-white text-2xl font-bold mb-2">{product.name}</h3>
           <p className="text-gray-200 text-sm truncate">{product.description}</p>
-          <p className="text-gray-200 text-sm font-semibold mt-2">
+          <p className="text-emerald-400 text-sm font-semibold mt-2">
             Price: ${product.price.toFixed(2)}
           </p>
         </div>

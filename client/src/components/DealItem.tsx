@@ -83,12 +83,14 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
                     />
 
                     {/* Display countdown */}
-                    <div className="absolute top-2 right-2 text-red-500 font-semibold p-2 z-20">
-                        <p className="text-lg" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)' }}>Sale ends: {countdown}</p>
+                    <div className="absolute top-0 left-0 right-0 p-4 z-20 flex items-center justify-end">
+                        <p className="text-lg text-red-500 font-semibold" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)' }}>
+                            Sale ends: {countdown}
+                        </p>
                     </div>
 
                     {/* Info */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 z-20 bg-black bg-opacity-50">
                         <h3 className="text-white text-xl font-bold mb-2 truncate">{deal.name}</h3>
                         <div className="flex items-center gap-2">
                             {/* Show original price with strikethrough if salePrice exists */}
@@ -115,6 +117,7 @@ const DealItem: React.FC<DealItemProps> = ({ deal }) => {
                                 {formattedRating} <Star fill="yellow" className="inline h-5 w-5 text-yellow-400" /> ({deal.reviewCount.toLocaleString()})
                             </p>
                         </div>
+
                     </div>
                 </div>
             </NavLink>
