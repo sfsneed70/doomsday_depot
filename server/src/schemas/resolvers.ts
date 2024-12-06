@@ -4,7 +4,6 @@ import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
 import type IProductInput from "../interfaces/ProductInput";
-import type IOrder from "../interfaces/OrderDocument";
 import { stripe } from "../server.js";
 
 const forbiddenException = new GraphQLError(
@@ -78,10 +77,10 @@ const resolvers = {
         throw new Error("User not authenticated");
       }
 
-      const order: Partial<IOrder> = {
+      const order = {
         products: args.products,
         purchaseDate: new Date(),
-      } as IOrder;
+      };
 
       // Push the order to the current user's `orders` field
       const user = await User.findById(context.user._id);
@@ -92,7 +91,7 @@ const resolvers = {
 
       // Group products by their ID and count the quantity
       const productQuantities: Record<string, number> = {};
-      order.products?.forEach((productId: any) => {
+      order.products.forEach((productId: string) => {
         productQuantities[productId] = (productQuantities[productId] || 0) + 1;
       });
 
