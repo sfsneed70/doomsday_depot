@@ -85,7 +85,7 @@ const resolvers = {
       // Push the order to the current user's `orders` field
       const user = await User.findById(context.user._id);
       if (user) {
-        user.orders.push(order as any);
+        user.orders.push(order);
         await user.save();
       }
 
@@ -123,6 +123,8 @@ const resolvers = {
         });
       }
 
+      console.log(line_items);
+
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items,
@@ -130,6 +132,7 @@ const resolvers = {
         success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${url}/`
       });
+
       return {
         sessionId: session.id,
         url: session.url,
