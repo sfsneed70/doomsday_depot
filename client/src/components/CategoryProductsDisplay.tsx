@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import ProductModal from "./ProductModal";
-import { useCart } from "../context/CartContext";
 import { Product } from "../types";
+import { useMutation } from "@apollo/client";
+import { ADD_TO_BASKET } from "../utils/mutations";
 
 interface CategoryProductsDisplayProps {
   product: Product;
@@ -9,10 +10,11 @@ interface CategoryProductsDisplayProps {
 
 const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ product }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const { dispatch } = useCart();
-
-  const handleAddToCart = (product: Product) => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
+  const [addBasketItem] = useMutation(ADD_TO_BASKET);
+  const handleAddToCart = async (product: Product) => {
+    await addBasketItem({
+      variables: { productId: product._id, quantity: 1 },
+    });
   };
 
   return (
@@ -31,7 +33,7 @@ const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ produ
         <div className="absolute bottom-0 left-0 right-0 p-4 z-20 bg-black bg-opacity-50">
           <h3 className="text-white text-2xl font-bold mb-2">{product.name}</h3>
           <p className="text-gray-200 text-sm truncate">{product.description}</p>
-          <p className="text-gray-200 text-sm font-semibold mt-2">
+          <p className="text-emerald-400 text-sm font-semibold mt-2">
             Price: ${product.price.toFixed(2)}
           </p>
         </div>
