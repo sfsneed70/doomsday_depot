@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, Document, Types } from "mongoose";
 
-// Interface to define the shape of the CategoryName document
+
 export interface ICategoryName extends Document {
   name: string;
   imageUrl: string;
@@ -9,12 +9,12 @@ export interface ICategoryName extends Document {
   productCount: number;
 }
 
-// Schema for the CategoryName model
+
 const CategoryNameSchema = new Schema<ICategoryName>(
   {
-    name: { type: String, required: true, unique: true }, // Category name
-    imageUrl: { type: String, required: true }, // Image for the category
-    products: [{ type: Schema.Types.ObjectId, ref: "Product" }], // Associated products
+    name: { type: String, required: true, unique: true }, 
+    imageUrl: { type: String, required: true }, 
+    products: [{ type: Schema.Types.ObjectId, ref: "Product" }], 
     createdAt: {
       type: Date,
       default: Date.now,
@@ -29,12 +29,12 @@ const CategoryNameSchema = new Schema<ICategoryName>(
   }
 );
 
-// Virtual field for product count
+
 CategoryNameSchema.virtual("productCount").get(function (this: ICategoryName) {
   return this.products.length;
 });
 
-// Export the model as "CategoryName"
+
 const CategoryName = model<ICategoryName>("CategoryName", CategoryNameSchema);
 
 export default CategoryName;
