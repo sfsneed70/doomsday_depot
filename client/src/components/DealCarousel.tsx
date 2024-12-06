@@ -7,7 +7,7 @@ import Button from "./Button";
 
 type DealCarouselProps = {
     deal: Array<{
-        id: number;
+        _id: string;
         name: string;
         price: number;
         salePrice: number;
@@ -15,18 +15,21 @@ type DealCarouselProps = {
         reviewCount: number;
         imageUrl: string;
         onSaleDate: string;
+        description: string;
+        stock: string;
     }>;
+    onOpenModal: (deal: any) => void;
 };
 
-const DealCarousel: React.FC<DealCarouselProps> = ({ deal }) => {
+const DealCarousel: React.FC<DealCarouselProps> = ({ deal, onOpenModal }) => {
     const prevRef = useRef<HTMLButtonElement>(null);
     const nextRef = useRef<HTMLButtonElement>(null);
     const swiperInstance = useRef<any>(null);
 
     useEffect(() => {
-            swiperInstance.current!.params.navigation.prevEl = prevRef.current;
-            swiperInstance.current!.params.navigation.nextEl = nextRef.current;
-            swiperInstance.current!.navigation.init();
+        swiperInstance.current!.params.navigation.prevEl = prevRef.current;
+        swiperInstance.current!.params.navigation.nextEl = nextRef.current;
+        swiperInstance.current!.navigation.init();
     }, []);
 
     return (
@@ -57,8 +60,8 @@ const DealCarousel: React.FC<DealCarouselProps> = ({ deal }) => {
                 }}
             >
                 {deal.map((deal) => (
-                    <SwiperSlide key={deal.id}>
-                        <DealItem deal={deal} />
+                    <SwiperSlide key={deal._id}>
+                        <DealItem deal={deal} onOpenModal={onOpenModal} />
                     </SwiperSlide>
                 ))}
             </Swiper>
@@ -69,8 +72,8 @@ const DealCarousel: React.FC<DealCarouselProps> = ({ deal }) => {
                     ref={prevRef}
                     text="Prev"
                     className="mr-4"
-                    />
-                <Button 
+                />
+                <Button
                     ref={nextRef}
                     text="Next"
                 />
