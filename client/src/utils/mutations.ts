@@ -39,16 +39,14 @@ export const ADD_REVIEW = gql`
 `;
 
 export const ADD_TO_BASKET = gql`
-  mutation AddToBasket($productId: ID!, $quantity: Int!) {
-    addToBasket(productId: $productId, quantity: $quantity) {
-      _id
-      product {
-        name
-        description
-        price
-        stock
+  mutation AddBasketItem($productId: ID!, $quantity: Int!) {
+    addBasketItem(productId: $productId, quantity: $quantity) {
+      basket {
+        product {
+          _id
+        }
+        quantity
       }
-      quantity
     }
   }
 `;
@@ -67,4 +65,3 @@ export const REMOVE_FROM_BASKET = gql`
     }
   }
 `;
-
