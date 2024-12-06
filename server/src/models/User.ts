@@ -9,7 +9,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   isCorrectPassword(password: string): Promise<boolean>;
-  orders: IOrder;
+  orders: IOrder[];
   basket: IBasketItem[];
   basketCount: number;
   basketTotal: number;
