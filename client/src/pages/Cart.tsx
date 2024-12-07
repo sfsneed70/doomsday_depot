@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
-import { GET_ME } from "../utils/queries";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+// import { useNavigate } from "react-router-dom";
+import { GET_ME, GET_CHECKOUT } from "../utils/queries";
 import { ADD_TO_BASKET, DECREMENT_BASKET_ITEM } from "../utils/mutations";
 import { IBasketItem } from "../interfaces/BasketItem";
 
@@ -13,9 +13,10 @@ const Cart: React.FC = () => {
 
   const [addToBasket] = useMutation(ADD_TO_BASKET);
   const [decrementBasketItem] = useMutation(DECREMENT_BASKET_ITEM);
+  const [getCheckout, { data: checkoutData }] = useLazyQuery(GET_CHECKOUT);
   const [basket, setBasket] = useState([]);
   const [basketTotal, setBasketTotal] = useState(0);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (data && data.me) {
@@ -42,9 +43,22 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleCheckout = () => {
-    navigate("/checkout");
+  const handleCheckout = async () => {
+    try {
+      // Array of product IDs, flatMap to duplicate IDs based on quantity
+      const products = basket.flatMap((item: IBasketItem) => Array(item.quantity).fill(item.product._id));
+
+      await getCheckout({ variables: {products}});
+    } catch (err) {
+      console.error("Error during checkout: ", err);
+    }
   };
+
+  useEffect(() => {
+    if (checkoutData && checkoutData.checkout) {
+      window.location.href = checkoutData.checkout.url;
+    }
+  }, [checkoutData]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
