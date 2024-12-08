@@ -10,11 +10,9 @@ const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
   const { loggedIn } = useAuth();
 
   if (!loggedIn) {
-    // Redirect to login page if not logged in
     return <Navigate to="/login" replace />;
   }
 
-  // Render the protected page if logged in
   return <>{children}</>;
 };
 
