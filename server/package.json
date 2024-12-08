@@ -10,7 +10,6 @@
     "watch": "nodemon dist/server.js",
     "build-and-seed": "npm run build && npm run seed",
     "seed": "node dist/seeds/ProductSeed.js"
-     
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +28,7 @@
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.1",
+    "stripe": "^17.4.0",
     "typescript": "^5.5.2"
   },
   "devDependencies": {

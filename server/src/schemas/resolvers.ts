@@ -4,6 +4,7 @@ import { signToken } from "../utils/auth.js";
 import type IUserContext from "../interfaces/UserContext";
 import type IUserDocument from "../interfaces/UserDocument";
 import type IProductInput from "../interfaces/ProductInput";
+import { stripe } from "../server.js";
 
 const forbiddenException = new GraphQLError(
   "You are not authorized to perform this action.",
@@ -56,6 +57,7 @@ const resolvers = {
         throw new GraphQLError("Error fetching category by name.");
       }
     },
+
     categoryNames: async () => {
       try {
         return await CategoryName.find().sort({ name: 1 });
@@ -64,6 +66,77 @@ const resolvers = {
         throw new GraphQLError("Error fetching category names.");
       }
     },
+
+    checkout: async (_parent: any, args: any, context: IUserContext) => {
+      let url;
+      if (context.headers) {
+        url = new URL(context.headers.referer || "").origin;
+      }
+
+      if (!context.user) {
+        throw new Error("User not authenticated");
+      }
+
+      const order = {
+        products: args.products,
+        purchaseDate: new Date(),
+      };
+
+      // Push the order to the current user's `orders` field
+      const user = await User.findById(context.user._id);
+      if (user) {
+        user.orders.push(order as any);
+        await user.save();
+      }
+
+      // Group products by their ID and count the quantity
+      const productQuantities: Record<string, number> = {};
+      order.products.forEach((productId: string) => {
+        productQuantities[productId] = (productQuantities[productId] || 0) + 1;
+      });
+
+      const line_items = [];
+      const productIds = Object.keys(productQuantities); // The list of product IDs
+      const products: any = await Product.find({ _id: { $in: productIds } });  // Fetch the products by their IDs
+    
+
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+        const quantity = productQuantities[product._id.toString()]; // Get the quantity for the product
+
+        const finalPrice = product.onSale && product.salePrice ? product.salePrice : product.price;
+
+        // Create the product in Stripe (or find it if already created)
+        const stripeProduct = await stripe.products.create({
+          name: product.name,
+          description: product.description,
+          images: [product.imageUrl]
+        });
+
+        const price = await stripe.prices.create({
+          product: stripeProduct.id,
+          unit_amount: Math.round(finalPrice * 100),
+          currency: 'usd',
+        });
+        line_items.push({
+          price: price.id,
+          quantity
+        });
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items,
+        mode: 'payment',
+        success_url: `${url}/success`,
+        cancel_url: `${url}/cart`
+      });
+
+      return {
+        sessionId: session.id,
+        url: session.url,
+      };
+    }
   },
 
   Mutation: {
