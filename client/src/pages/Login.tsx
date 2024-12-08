@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import LoginForm from "../components/LoginForm";
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <motion.div

@@ -137,3 +137,12 @@ export const GET_CATEGORY_BY_NAME = gql`
     }
   }
 `;
+
+export const GET_CHECKOUT = gql`
+  query Checkout($products: [ID!]!) {
+    checkout(products: $products) {
+      sessionId
+      url
+    }
+  }
+`;

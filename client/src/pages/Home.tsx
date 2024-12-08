@@ -7,9 +7,10 @@ import { Deal } from "../types";
 import CategoryItem from "../components/CategoryItem";
 import DealCarousel from "../components/DealCarousel";
 import DealModal from "../components/DealModal";
+// import useToast from "../components/Toast";
 
 
-const Home = () => {
+const Home: React.FC = () => {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
 

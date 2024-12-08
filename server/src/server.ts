@@ -6,9 +6,8 @@ import { typeDefs, resolvers } from "./schemas/index.js";
 import db from "./config/connection.js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-
+import Stripe from "stripe";
 import cors from "cors";
-
 import { ChatOpenAI } from "@langchain/openai";
 
 import dotenv from "dotenv";
@@ -29,6 +28,17 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.use(cors());
+
+// Stripe Instance
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: "2024-11-20.acacia",
+  appInfo: { // For sample support and debugging, not required for production:
+    name: "stripe-samples/accept-a-payment",
+    url: "https://github.com/stripe-samples", // what is this suppose to be?
+    version: "0.0.2",
+  },
+  typescript: true,
+});
 
 const server = new ApolloServer({
   typeDefs,

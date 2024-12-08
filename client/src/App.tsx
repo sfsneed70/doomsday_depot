@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import {
   ApolloClient,
   InMemoryCache,
@@ -55,6 +56,7 @@ function App() {
 
         <div className='relative z-50 pt-20'>
           <AuthProvider>
+            <Toaster />
             <Navbar />
             <Chatbot />
             <div >

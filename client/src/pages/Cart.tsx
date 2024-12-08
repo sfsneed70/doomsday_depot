@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
-import { GET_ME } from "../utils/queries";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+// import { useNavigate } from "react-router-dom";
+import { GET_ME, GET_CHECKOUT } from "../utils/queries";
 import { ADD_TO_BASKET, DECREMENT_BASKET_ITEM } from "../utils/mutations";
 import { IBasketItem } from "../interfaces/BasketItem";
+import useToast from "../components/Toast";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePublicKey = `pk_test_51QRdlqK1v5m8j23imvztyNYobl3cLgVnYVkJGJWgX9ozmu2s1X8IbucEECd57G0bbUDHEoSfvDWP6xFx3fHLk2XH00OGPhRLkw`;
+const stripePromise = loadStripe(stripePublicKey);
 
 const Cart: React.FC = () => {
   // const { loading, error, data, refetch } = useQuery(GET_ME);
+
   const { loading, data, error, refetch } = useQuery(GET_ME, {
     fetchPolicy: "cache-and-network",
   });
 
   const [addToBasket] = useMutation(ADD_TO_BASKET);
   const [decrementBasketItem] = useMutation(DECREMENT_BASKET_ITEM);
+  const [getCheckout, { data: checkoutData, loading: checkoutLoading }] = useLazyQuery(GET_CHECKOUT);
   const [basket, setBasket] = useState([]);
   const [basketTotal, setBasketTotal] = useState(0);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+
+  useToast({ loading, checkoutLoading, error });
 
   useEffect(() => {
     if (data && data.me) {
@@ -42,16 +51,30 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleCheckout = () => {
-    navigate("/checkout");
+  const handleCheckout = async () => {
+    try {
+      // Array of product IDs, flatMap to duplicate IDs based on quantity
+      const products = basket.flatMap((item: IBasketItem) => Array(item.quantity).fill(item.product._id));
+
+      await getCheckout({ variables: { products } });
+    } catch (err) {
+      console.error("Error during checkout: ", err);
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  useEffect(() => {
+    if (checkoutData && checkoutData.checkout) {
+      stripePromise.then((stripe) => {
+        if (stripe) {
+          stripe.redirectToCheckout({ sessionId: checkoutData.checkout.sessionId });
+        }
+      });
+    }
+  }, [checkoutData]);
 
   return (
     <div className="bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen p-6 text-gray-200">
-      <h1 className="text-3xl font-bold text-green-400 mb-6">Your Cart</h1>
+      <h1 className="text-3xl font-bold text-emerald-400 mb-6">Your Cart</h1>
 
       {basket.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -67,7 +90,7 @@ const Cart: React.FC = () => {
                   className="h-24 w-24 object-cover rounded-md"
                 />
                 <div className="ml-4 flex-1">
-                  <h2 className="text-xl font-semibold text-green-400">
+                  <h2 className="text-xl font-semibold text-emerald-400">
                     {item.product.name}
                   </h2>
                   <p className="text-gray-300">
@@ -80,7 +103,7 @@ const Cart: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    className="bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded-md"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-3 rounded-md"
                     onClick={() => handleAddToBasket(item.product._id)}
                   >
                     +
@@ -97,7 +120,7 @@ const Cart: React.FC = () => {
           </div>
 
           <div className="cart-summary bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-green-400 mb-4">Cart Summary</h2>
+            <h2 className="text-2xl font-bold text-emerald-400 mb-4">Cart Summary</h2>
             <p className="text-gray-300 text-lg">
               <span className="font-semibold">Total: </span>${basketTotal.toFixed(2)}
             </p>

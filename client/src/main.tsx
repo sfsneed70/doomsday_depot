@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import ShopDisplay from "./pages/ShopDisplay";
 import CategoryPage from "./pages/CategoryPage";
 import Cart from "./pages/Cart";
+import PurchaseSuccessPage from "./pages/Success";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "/category/:categoryName",
         element: <CategoryPage />, 
+      },
+      {
+        path: "/success",
+        element: <PurchaseSuccessPage />,
       },
     ],
   },
