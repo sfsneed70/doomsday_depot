@@ -51,7 +51,7 @@ const DealModal: React.FC<ModalProps> = ({ deal, isOpen, onClose, onAddToCart })
                     {/* Only show add to cart if logged in. */}
                     {auth.loggedIn() ? (
                         <button
-                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500"
+                            className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-500"
                             onClick={() => {
                                 onAddToCart(deal);
                                 onClose();
