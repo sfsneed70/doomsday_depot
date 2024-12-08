@@ -5,9 +5,14 @@ import { GET_ME, GET_CHECKOUT } from "../utils/queries";
 import { ADD_TO_BASKET, DECREMENT_BASKET_ITEM } from "../utils/mutations";
 import { IBasketItem } from "../interfaces/BasketItem";
 import useToast from "../components/Toast";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePublicKey = `pk_test_51QRdlqK1v5m8j23imvztyNYobl3cLgVnYVkJGJWgX9ozmu2s1X8IbucEECd57G0bbUDHEoSfvDWP6xFx3fHLk2XH00OGPhRLkw`;
+const stripePromise = loadStripe(stripePublicKey);
 
 const Cart: React.FC = () => {
   // const { loading, error, data, refetch } = useQuery(GET_ME);
+
   const { loading, data, error, refetch } = useQuery(GET_ME, {
     fetchPolicy: "cache-and-network",
   });
@@ -59,7 +64,11 @@ const Cart: React.FC = () => {
 
   useEffect(() => {
     if (checkoutData && checkoutData.checkout) {
-      window.location.href = checkoutData.checkout.url;
+      stripePromise.then((stripe) => {
+        if (stripe) {
+          stripe.redirectToCheckout({ sessionId: checkoutData.checkout.sessionId });
+        }
+      });
     }
   }, [checkoutData]);
 
