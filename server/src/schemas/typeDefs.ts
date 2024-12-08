@@ -119,6 +119,7 @@ const typeDefs = gql`
     addBasketItem(productId: ID!, quantity: Int!): User
     removeBasketItem(productId: ID!): User
     decrementBasketItem(productId: ID!): User
+    clearBasket: User
   }
 `;
 

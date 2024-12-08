@@ -7,7 +7,6 @@ import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import ShopDisplay from "./pages/ShopDisplay";
 import CategoryPage from "./pages/CategoryPage";
 import Cart from "./pages/Cart";
 import PurchaseSuccessPage from "./pages/Success";
@@ -29,10 +28,6 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
-      },
-      {
-        path: "/shop",
-        element: <ShopDisplay />,
       },
       {
         path: "/cart",

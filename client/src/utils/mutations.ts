@@ -77,3 +77,16 @@ export const DECREMENT_BASKET_ITEM = gql`
     }
   }
 `;
+
+export const CLEAR_BASKET = gql`
+  mutation ClearBasket {
+    clearBasket {
+      _id
+      basket {
+        product {
+          _id
+        }
+      }
+    }
+  }
+`;

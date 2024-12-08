@@ -492,6 +492,13 @@ const resolvers = {
       }
       throw forbiddenException;
     },
+
+    clearBasket: async (_parent: any, _args: any, context: IUserContext) => {
+      if (context.user) {
+        return await User.findByIdAndUpdate(context.user._id, { basket: [] }, { new: true });
+      }
+      throw forbiddenException;
+    },
   },
 };
 
