@@ -129,7 +129,7 @@ const resolvers = {
         line_items,
         mode: 'payment',
         success_url: `${url}/success`,
-        cancel_url: `${url}/`
+        cancel_url: `${url}/cart`
       });
 
       return {

@@ -6,12 +6,11 @@ import Confetti from "react-confetti";
 
 const PurchaseSuccessPage: React.FC = () => {
     const { data, loading, error } = useQuery(GET_ME);
-    const { basket, basketTotal } = data.me;
-
-
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error retrieving user data</p>;
+
+    const { basket, basketTotal } = data.me;
 
     return (
         <div className="h-screen flex items-center justify-center px-4">
