@@ -1,16 +1,37 @@
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
 import { GET_ME } from "../utils/queries";
+import { CLEAR_BASKET } from "../utils/mutations";
 import Confetti from "react-confetti";
 
 const PurchaseSuccessPage: React.FC = () => {
     const { data, loading, error } = useQuery(GET_ME);
+    const [clearBasket] = useMutation(CLEAR_BASKET, {
+        refetchQueries: [{query: GET_ME}],
+        awaitRefetchQueries: true,
+    });
+    const [purchasedDetails, setPurchasedDetails] = useState<{
+        basket: any[];
+        basketTotal: Number;
+    }>({ basket: [], basketTotal: 0 });
+
+    useEffect(() => {
+        if (data?.me && purchasedDetails.basket.length === 0) {
+            setPurchasedDetails({
+                basket: data.me.basket,
+                basketTotal: data.me.basketTotal
+            });
+
+            clearBasket().catch((err) => console.error("Error clearing basket: ", err));
+        }
+    }, [data]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error retrieving user data</p>;
 
-    const { basket, basketTotal } = data.me;
+    const { basket, basketTotal } = purchasedDetails;
 
     return (
         <div className="h-screen flex items-center justify-center px-4">
