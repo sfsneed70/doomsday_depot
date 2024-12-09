@@ -8,7 +8,10 @@ import Confetti from "react-confetti";
 
 const PurchaseSuccessPage: React.FC = () => {
     const { data, loading, error } = useQuery(GET_ME);
-    const [clearBasket] = useMutation(CLEAR_BASKET);
+    const [clearBasket] = useMutation(CLEAR_BASKET, {
+        refetchQueries: [{query: GET_ME}],
+        awaitRefetchQueries: true,
+    });
     const [purchasedDetails, setPurchasedDetails] = useState<{
         basket: any[];
         basketTotal: Number;
