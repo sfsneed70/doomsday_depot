@@ -3,12 +3,15 @@ import { NavLink } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 import Confetti from "react-confetti";
+import useToast from "../components/Toast";
 
 const PurchaseSuccessPage: React.FC = () => {
     const { data, loading, error } = useQuery(GET_ME);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error retrieving user data</p>;
+    useToast({
+        loading,
+        error,
+    })
 
     const { basket, basketTotal } = data.me;
 

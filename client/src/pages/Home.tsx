@@ -7,7 +7,7 @@ import { Deal } from "../types";
 import CategoryItem from "../components/CategoryItem";
 import DealCarousel from "../components/DealCarousel";
 import DealModal from "../components/DealModal";
-// import useToast from "../components/Toast";
+import useToast from "../components/Toast";
 
 
 const Home: React.FC = () => {
@@ -25,9 +25,12 @@ const Home: React.FC = () => {
   const { loading: loadingCategories, error: errorCategories, data: dataCategories } = useQuery(GET_CATEGORIES);
   const { loading: loadingProducts, error: errorProducts, data: dataProducts } = useQuery(GET_PRODUCTS);
 
-  if (loadingCategories || loadingProducts) return <div>Loading categories...</div>;
-  if (errorCategories) return <div>Error fetching categories: {errorCategories.message}</div>;
-  if (errorProducts) return <div>Error fetching products: {errorProducts.message}</div>;
+  useToast({
+    loading: loadingCategories || loadingProducts,
+    error: errorCategories || errorProducts,
+    loadingMessage: "Loading categories and products...",
+    errorMessage: errorCategories?.message || errorProducts?.message
+  })
 
   // Fetch products for deal carousel
   const deals = dataProducts.products.filter((product: Deal) => product.onSale).map((product: Deal) => ({
