@@ -1,8 +1,8 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ApolloProvider } from "@apollo/client"; 
-import client from "./apolloClient"; 
-import "../index.css";  
+import { ApolloProvider } from "@apollo/client";
+import client from "./apolloClient";
+import "../index.css";
 import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import CategoryPage from "./pages/CategoryPage";
 import Cart from "./pages/Cart";
 import PurchaseSuccessPage from "./pages/Success";
+import AuthRoute from "./components/AuthRoute";
 
 const router = createBrowserRouter([
   {
@@ -31,15 +32,26 @@ const router = createBrowserRouter([
       },
       {
         path: "/cart",
-        element: <Cart />, 
+        element: (
+          <AuthRoute>
+            <Cart />
+          </AuthRoute>
+        ),
+
       },
       {
         path: "/category/:categoryName",
-        element: <CategoryPage />, 
+        element: <CategoryPage />,
       },
       {
         path: "/success",
-        element: <PurchaseSuccessPage />,
+        element:
+          (
+            <AuthRoute>
+              <PurchaseSuccessPage />
+            </AuthRoute>
+          )
+
       },
     ],
   },
@@ -47,8 +59,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>
-    
-      <RouterProvider router={router} />
-    
+
+    <RouterProvider router={router} />
+
   </ApolloProvider>
 );
