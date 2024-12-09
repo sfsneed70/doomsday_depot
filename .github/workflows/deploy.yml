@@ -18,5 +18,5 @@ jobs:
         uses: akhileshns/heroku-deploy@v3.13.15
         with:
             heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-            heroku_app_name: "eshop-group-project" # CHANGE THIS NAME WHEN FINALIZED
+            heroku_app_name: "doomsday-depot" # CHANGE THIS NAME WHEN FINALIZED
             heroku_email: "justinkao010@gmail.com" # testing
