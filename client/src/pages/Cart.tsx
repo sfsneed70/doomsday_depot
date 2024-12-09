@@ -95,7 +95,9 @@ const Cart: React.FC = () => {
                   </h2>
                   <p className="text-gray-300">
                     Price:{" "}
-                    <span className="font-medium">${item.product.price.toFixed(2)}</span>
+                    <span className="font-medium">
+                      ${item.product.salePrice?.toFixed(2) || item.product.price.toFixed(2)}
+                    </span>
                   </p>
                   <p className="text-gray-300">
                     Quantity: <span className="font-medium">{item.quantity}</span>
