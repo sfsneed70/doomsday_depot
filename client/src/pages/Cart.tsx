@@ -16,12 +16,24 @@ const Cart: React.FC = () => {
 
   const [addToBasket] = useMutation(ADD_TO_BASKET);
   const [decrementBasketItem] = useMutation(DECREMENT_BASKET_ITEM);
-  const [getCheckout, { data: checkoutData, loading: checkoutLoading }] = useLazyQuery(GET_CHECKOUT);
+  const [getCheckout, { data: checkoutData, loading: checkoutLoading, error: checkoutError }] = useLazyQuery(GET_CHECKOUT);
   const [getProductDetails] = useLazyQuery(GET_PRODUCT);
   const [basket, setBasket] = useState<IBasketItem[]>([]);
   const [basketTotal, setBasketTotal] = useState(0);
+  
+  useToast({
+    loading,
+    error,
+    loadingMessage: "Loading cart...",
+    errorMessage: "Failed to load cart",
+  })
 
-  useToast({ loading, checkoutLoading, error });
+  useToast({
+    loading: checkoutLoading,
+    error: checkoutError,
+    loadingMessage: "Redirecting...",
+    errorMessage: "Error during checkout",
+  })
 
   useEffect(() => {
     if (data && data.me) {
@@ -162,4 +174,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-

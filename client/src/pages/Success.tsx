@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { GET_ME } from "../utils/queries";
 import { CLEAR_BASKET } from "../utils/mutations";
 import Confetti from "react-confetti";
+import useToast from "../components/Toast";
 
 const PurchaseSuccessPage: React.FC = () => {
     const { data, loading, error } = useQuery(GET_ME);
@@ -28,8 +29,10 @@ const PurchaseSuccessPage: React.FC = () => {
         }
     }, [data]);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error retrieving user data</p>;
+    useToast({
+        loading,
+        error,
+    })
 
     const { basket, basketTotal } = purchasedDetails;
 
