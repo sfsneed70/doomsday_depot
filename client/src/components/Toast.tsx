@@ -1,33 +1,33 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 
-// Accept a single `loadingState` object instead of separate loading arguments
-const useToast = (loadingState: { loading: boolean; checkoutLoading: boolean; error: any }) => {
-  const { loading, checkoutLoading, error } = loadingState;
-  const loadingToastId = useRef<string | null>(null); // Keep track of the toast ID
+const useToast = ({
+  loading,
+  error,
+  loadingMessage = "Loading...", // Default message for loading state
+  errorMessage = "An error occurred", // Default message for error state
+}: {
+  loading: boolean;
+  error: any;
+  loadingMessage?: string; // Optional custom message for loading
+  errorMessage?: string; // Optional custom message for error
+}) => {
+  const loadingToastId = useRef<string | null>(null);
 
   useEffect(() => {
-    // For regular loading
+    // Handle loading state
     if (loading && !loadingToastId.current) {
-      loadingToastId.current = toast.loading("Loading your cart...");
+      loadingToastId.current = toast.loading(loadingMessage);
     } else if (!loading && loadingToastId.current) {
       toast.dismiss(loadingToastId.current);
       loadingToastId.current = null;
     }
 
-    // For checkout loading
-    if (checkoutLoading && !loadingToastId.current) {
-      loadingToastId.current = toast.loading("Redirecting to checkout...");
-    } else if (!checkoutLoading && loadingToastId.current) {
-      toast.dismiss(loadingToastId.current);
-      loadingToastId.current = null;
-    }
-
-    // Handle error
+    // Handle error state
     if (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(errorMessage);
     }
-  }, [loading, checkoutLoading, error]);
+  }, [loading, error, loadingMessage, errorMessage]);
 };
 
 export default useToast;
