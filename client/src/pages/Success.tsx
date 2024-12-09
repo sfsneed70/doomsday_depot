@@ -7,13 +7,8 @@ import { CLEAR_BASKET } from "../utils/mutations";
 import Confetti from "react-confetti";
 
 const PurchaseSuccessPage: React.FC = () => {
-    const { data, loading, error } = useQuery(GET_ME, {
-        fetchPolicy: "cache-first",
-    });
-    const [clearBasket] = useMutation(CLEAR_BASKET, {
-        refetchQueries: [],
-        awaitRefetchQueries: false,
-    });
+    const { data, loading, error } = useQuery(GET_ME);
+    const [clearBasket] = useMutation(CLEAR_BASKET);
     const [purchasedDetails, setPurchasedDetails] = useState<{
         basket: any[];
         basketTotal: Number;
