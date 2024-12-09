@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
-// import { useNavigate } from "react-router-dom";
-import { GET_ME, GET_CHECKOUT } from "../utils/queries";
+import { GET_ME, GET_PRODUCT, GET_CHECKOUT } from "../utils/queries";
 import { ADD_TO_BASKET, DECREMENT_BASKET_ITEM } from "../utils/mutations";
 import { IBasketItem } from "../interfaces/BasketItem";
 import useToast from "../components/Toast";
@@ -11,20 +10,30 @@ const stripePublicKey = `pk_test_51QRdlqK1v5m8j23imvztyNYobl3cLgVnYVkJGJWgX9ozmu
 const stripePromise = loadStripe(stripePublicKey);
 
 const Cart: React.FC = () => {
-  // const { loading, error, data, refetch } = useQuery(GET_ME);
-
   const { loading, data, error, refetch } = useQuery(GET_ME, {
     fetchPolicy: "cache-and-network",
   });
 
   const [addToBasket] = useMutation(ADD_TO_BASKET);
   const [decrementBasketItem] = useMutation(DECREMENT_BASKET_ITEM);
-  const [getCheckout, { data: checkoutData, loading: checkoutLoading }] = useLazyQuery(GET_CHECKOUT);
-  const [basket, setBasket] = useState([]);
+  const [getCheckout, { data: checkoutData, loading: checkoutLoading, error: checkoutError }] = useLazyQuery(GET_CHECKOUT);
+  const [getProductDetails] = useLazyQuery(GET_PRODUCT);
+  const [basket, setBasket] = useState<IBasketItem[]>([]);
   const [basketTotal, setBasketTotal] = useState(0);
-  // const navigate = useNavigate();
+  
+  useToast({
+    loading,
+    error,
+    loadingMessage: "Loading cart...",
+    errorMessage: "Failed to load cart",
+  })
 
-  useToast({ loading, checkoutLoading, error });
+  useToast({
+    loading: checkoutLoading,
+    error: checkoutError,
+    loadingMessage: "Redirecting...",
+    errorMessage: "Error during checkout",
+  })
 
   useEffect(() => {
     if (data && data.me) {
@@ -32,6 +41,31 @@ const Cart: React.FC = () => {
       setBasketTotal(data.me.basketTotal);
     }
   }, [data]);
+
+  const fetchSalePrice = async (productId: string) => {
+    try {
+      const { data: productData } = await getProductDetails({ variables: { productId } });
+      if (productData && productData.product) {
+        setBasket((prevBasket) =>
+          prevBasket.map((item: IBasketItem) =>
+            item.product._id === productId
+              ? { ...item, product: { ...item.product, ...productData.product } }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching product details:", err);
+    }
+  };
+
+  useEffect(() => {
+    basket.forEach((item: IBasketItem) => {
+      if (item.product.salePrice === undefined) {
+        fetchSalePrice(item.product._id);
+      }
+    });
+  }, [basket]);
 
   const handleAddToBasket = async (productId: string) => {
     try {
@@ -53,9 +87,7 @@ const Cart: React.FC = () => {
 
   const handleCheckout = async () => {
     try {
-      // Array of product IDs, flatMap to duplicate IDs based on quantity
       const products = basket.flatMap((item: IBasketItem) => Array(item.quantity).fill(item.product._id));
-
       await getCheckout({ variables: { products } });
     } catch (err) {
       console.error("Error during checkout: ", err);
@@ -95,7 +127,9 @@ const Cart: React.FC = () => {
                   </h2>
                   <p className="text-gray-300">
                     Price:{" "}
-                    <span className="font-medium">${item.product.price.toFixed(2)}</span>
+                    <span className="font-medium">
+                      ${item.product.salePrice?.toFixed(2) || item.product.price.toFixed(2)}
+                    </span>
                   </p>
                   <p className="text-gray-300">
                     Quantity: <span className="font-medium">{item.quantity}</span>
@@ -140,6 +174,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-
-
-

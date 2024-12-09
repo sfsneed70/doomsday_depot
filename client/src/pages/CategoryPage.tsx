@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_CATEGORY_BY_NAME } from "../utils/queries";
 import CategoryProductsDisplay from "../components/CategoryProductsDisplay";
+import useToast from "../components/Toast";
 
 interface Category {
   name: string;
@@ -29,8 +30,10 @@ const CategoryPage: React.FC = () => {
     variables: { categoryName },
   });
 
-  if (loading) return <p aria-live="polite">Loading...</p>;
-  if (error) return <p className="text-red-500" aria-live="assertive">Error: {error.message}</p>;
+  useToast({
+    loading,
+    error,
+  })
 
   const category = data?.categoryByName;
 

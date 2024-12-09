@@ -10,7 +10,7 @@ import Signup from "./pages/Signup";
 import CategoryPage from "./pages/CategoryPage";
 import Cart from "./pages/Cart";
 import PurchaseSuccessPage from "./pages/Success";
-// import AuthRoute from "./components/AuthRoute";
+import AuthRoute from "./components/AuthRoute";
 
 const router = createBrowserRouter([
   {
@@ -33,8 +33,11 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: (
+          <AuthRoute>
             <Cart />
+          </AuthRoute>
         ),
+
       },
       {
         path: "/category/:categoryName",
@@ -42,9 +45,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/success",
-        element: (
-            <PurchaseSuccessPage />
-        ),
+        element:
+          (
+            <AuthRoute>
+              <PurchaseSuccessPage />
+            </AuthRoute>
+          )
+
       },
     ],
   },
@@ -57,4 +64,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
   </ApolloProvider>
 );
-
