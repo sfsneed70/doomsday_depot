@@ -6,7 +6,7 @@
 
 Your one-stop shop for all your post-apocolyptic needs.  Browse various categories including tools, weapons, medical, shelter, etc.  You'll find everything you need for the next zombie or nuclear appocalypse. Perfect for preppers and survivalists.  Don't forget to watch out for our weekly 20% off specials.
 
-![App Screenshot](???)
+![App Screenshot](/client/public/screenshot.png)
 
 ## Concept
 
@@ -54,7 +54,7 @@ Development Team:
 
 Application:
 
-- Live site: ???
+- Live site: https://doomsday-depot-e3b01e59b096.herokuapp.com/
 
 - Github Repo: https://github.com/sfsneed70/doomsday_depot
 
