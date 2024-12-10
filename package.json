@@ -1,5 +1,5 @@
 {
-  "name": "apollo_review_app",
+  "name": "doomsday_depot",
   "version": "1.0.0",
   "description": "",
   "main": "server/dist/server.js",
@@ -23,5 +23,8 @@
   "devDependencies": {
     "ts-node": "^10.9.2",
     "wait-on": "^7.2.0"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
