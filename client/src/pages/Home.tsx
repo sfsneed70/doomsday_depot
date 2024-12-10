@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useMutation } from "@apollo/client";
-import { GET_CATEGORIES, GET_PRODUCTS } from "../utils/queries";
+import { GET_ME, GET_CATEGORIES, GET_PRODUCTS } from "../utils/queries";
 import { ADD_TO_BASKET } from "../utils/mutations";
 import { Deal } from "../types";
 import CategoryItem from "../components/CategoryItem";
@@ -18,6 +18,7 @@ const Home: React.FC = () => {
   const handleAddToCart = async (deal: Deal) => {
     await addBasketItem({
       variables: { productId: deal._id, quantity: 1 },
+      refetchQueries: [{query: GET_ME }],
     });
   };
 
