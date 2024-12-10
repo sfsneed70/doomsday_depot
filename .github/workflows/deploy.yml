@@ -30,4 +30,4 @@ jobs:
         with:
             heroku_api_key: ${{secrets.HEROKU_API_KEY}}
             heroku_app_name: "doomsday-depot"
-            heroku_email: "justinkao010@gmail.com" #deploying updates
+            heroku_email: "justinkao010@gmail.com" 
