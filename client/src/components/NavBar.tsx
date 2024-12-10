@@ -10,7 +10,6 @@ const NavBar: React.FC = () => {
   const { loggedIn, setLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  // const { data, refetch } = useQuery(GET_ME);
   const { data, refetch } = useQuery(GET_ME, {
     fetchPolicy: "cache-and-network",
   });
