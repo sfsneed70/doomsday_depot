@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ProductModal from "./ProductModal";
 import { Product } from "../types";
 import { useMutation } from "@apollo/client";
+import {GET_ME} from "../utils/queries";
 import { ADD_TO_BASKET } from "../utils/mutations";
 
 interface CategoryProductsDisplayProps {
@@ -14,6 +15,7 @@ const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ produ
   const handleAddToCart = async (product: Product) => {
     await addBasketItem({
       variables: { productId: product._id, quantity: 1 },
+      refetchQueries: [{query: GET_ME }],
     });
   };
 
