@@ -74,7 +74,12 @@ userSchema.methods.isCorrectPassword = async function (
 
 // Virtual fields
 userSchema.virtual("basketCount").get(function (this: IUser) {
-  return this.basket.length;
+  let total = 0;
+  for (const item of this.basket) {
+    total += item.quantity;
+  }
+  return total;
+  // return this.basket.length; // Alternative implementation
 });
 
 userSchema.virtual("basketTotal").get(function (this: IUser) {
