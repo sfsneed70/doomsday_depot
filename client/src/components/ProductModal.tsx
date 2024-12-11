@@ -1,12 +1,12 @@
 import React from "react";
-import { Product } from "../types"; // Import shared Product type
+import { IProduct } from "../interfaces/Product"
 import auth from "../utils/auth";
 
 interface ModalProps {
-  product: Product | null;
+  product: IProduct | null;
   isOpen: boolean;
   onClose: () => void;
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (product: IProduct) => void;
 }
 
 const ProductModal: React.FC<ModalProps> = ({ product, isOpen, onClose, onAddToCart }) => {

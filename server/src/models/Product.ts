@@ -11,6 +11,7 @@ export interface IProduct extends Document {
   stock: number;
   onSale: boolean;
   onSaleDate: Date;
+  salePrice: number;
   dateCreated: Date | string;
   reviews: IReview[];
 }

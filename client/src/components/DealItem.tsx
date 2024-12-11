@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import dayjs from 'dayjs';
-import { Deal } from "../types";
+import { IDeal } from "../interfaces/Deal";
 
 
 type DealItemProps = {
-    deal: Deal;
-    onOpenModal: (deal: Deal) => void;
+    deal: IDeal;
+    onOpenModal: (deal: IDeal) => void;
 };
 
 const DealItem: React.FC<DealItemProps> = ({ deal, onOpenModal }) => {
