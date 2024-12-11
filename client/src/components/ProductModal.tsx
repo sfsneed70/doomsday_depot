@@ -33,7 +33,7 @@ const ProductModal: React.FC<ModalProps> = ({ product, isOpen, onClose, onAddToC
             <strong>Description:</strong> {product.description}
           </p>
           <p className="mb-2">
-            <strong>Price:</strong> ${product.price.toFixed(2)}
+            <strong>Price:</strong> ${(product.salePrice || product.price).toFixed(2)}
           </p>
           <p className="mb-4">
             <strong>Stock:</strong> {product.stock} left
