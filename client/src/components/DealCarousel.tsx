@@ -1,14 +1,14 @@
 import { useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import { Deal } from "../types";
+import { IDeal } from "../interfaces/Deal";
 import 'swiper/swiper-bundle.css';
 import DealItem from "./DealItem";
 import Button from "./Button";
 
 type DealCarouselProps = {
-    deal: Deal[];
-    onOpenModal: (deal: Deal) => void;
+    deal: IDeal[];
+    onOpenModal: (deal: IDeal) => void;
 };
 
 const DealCarousel: React.FC<DealCarouselProps> = ({ deal, onOpenModal }) => {

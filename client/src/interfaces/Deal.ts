@@ -1,14 +1,4 @@
-// src/types.ts
-export interface Product {
-    _id: string;
-    name: string;
-    imageUrl: string;
-    description: string;
-    price: number;
-    stock: number;
-  }
-  
-  export interface Deal {
+export interface IDeal {
     _id: string;
     name: string;
     price: number;
@@ -21,3 +11,4 @@ export interface Product {
     description: string;
     stock: string;
   }
+  

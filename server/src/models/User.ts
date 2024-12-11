@@ -85,7 +85,7 @@ userSchema.virtual("basketCount").get(function (this: IUser) {
 userSchema.virtual("basketTotal").get(function (this: IUser) {
   let total = 0;
   for (const item of this.basket) {
-    total += item.quantity * item.product.price;
+    total += item.quantity * item.product.salePrice;
   }
   return total; 
 });

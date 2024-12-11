@@ -4,19 +4,11 @@ import { useQuery } from "@apollo/client";
 import { GET_CATEGORY_BY_NAME } from "../utils/queries";
 import CategoryProductsDisplay from "../components/CategoryProductsDisplay";
 import useToast from "../components/Toast";
+import { IProduct } from "../interfaces/Product"
 
 interface Category {
   name: string;
-  products: Product[];
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  imageUrl: string;
-  description: string;
-  price: number;
-  stock: number;
+  products: IProduct[];
 }
 
 const CategoryPage: React.FC = () => {

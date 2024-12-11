@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import { useMutation } from "@apollo/client";
 import { GET_ME, GET_CATEGORIES, GET_PRODUCTS } from "../utils/queries";
 import { ADD_TO_BASKET } from "../utils/mutations";
-import { Deal } from "../types";
+import { IDeal } from "../interfaces/Deal";
 import CategoryItem from "../components/CategoryItem";
 import DealCarousel from "../components/DealCarousel";
 import DealModal from "../components/DealModal";
@@ -11,11 +11,11 @@ import useToast from "../components/Toast";
 
 
 const Home: React.FC = () => {
-  const [selectedDeal, setSelectedDeal] = useState(null);
+  const [selectedDeal, setSelectedDeal] = useState(null as IDeal | null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   const [addBasketItem] = useMutation(ADD_TO_BASKET);
-  const handleAddToCart = async (deal: Deal) => {
+  const handleAddToCart = async (deal: IDeal) => {
     await addBasketItem({
       variables: { productId: deal._id, quantity: 1 },
       refetchQueries: [{query: GET_ME }],
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
   // Fetch products for deal carousel
   let deals = [];
   if (dataProducts && dataProducts.products) {
-    deals = dataProducts.products.filter((product: Deal) => product.onSale).map((product: Deal) => ({
+    deals = dataProducts.products.filter((product: IDeal) => product.onSale).map((product: IDeal) => ({
       _id: product._id,
       name: product.name,
       price: product.price,
@@ -52,7 +52,7 @@ const Home: React.FC = () => {
     }));
   }
 
-  const handleOpenModal = (deal: any) => {
+  const handleOpenModal = (deal: IDeal) => {
     setSelectedDeal(deal);
     setModalOpen(true);
   };

@@ -1,12 +1,12 @@
 import React from "react";
-import { Deal } from "../types";
+import { IDeal } from "../interfaces/Deal";
 import auth from "../utils/auth";
 
 interface ModalProps {
-    deal: Deal;
+    deal: IDeal;
     isOpen: boolean;
     onClose: () => void;
-    onAddToCart: (deal: any) => void;
+    onAddToCart: (deal: IDeal) => void;
 }
 
 const DealModal: React.FC<ModalProps> = ({ deal, isOpen, onClose, onAddToCart }) => {

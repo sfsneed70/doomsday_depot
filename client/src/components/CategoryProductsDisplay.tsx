@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import ProductModal from "./ProductModal";
-import { Product } from "../types";
+import { IProduct } from "../interfaces/Product"
 import { useMutation } from "@apollo/client";
 import {GET_ME} from "../utils/queries";
 import { ADD_TO_BASKET } from "../utils/mutations";
 
 interface CategoryProductsDisplayProps {
-  product: Product;
+  product: IProduct;
 }
 
 const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ product }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [addBasketItem] = useMutation(ADD_TO_BASKET);
-  const handleAddToCart = async (product: Product) => {
+  const handleAddToCart = async (product: IProduct) => {
     await addBasketItem({
       variables: { productId: product._id, quantity: 1 },
       refetchQueries: [{query: GET_ME }],
@@ -36,7 +36,7 @@ const CategoryProductsDisplay: React.FC<CategoryProductsDisplayProps> = ({ produ
           <h3 className="text-white text-2xl font-bold mb-2">{product.name}</h3>
           <p className="text-gray-200 text-sm truncate">{product.description}</p>
           <p className="text-emerald-400 text-sm font-semibold mt-2">
-            Price: ${product.price.toFixed(2)}
+            Price: ${(product.salePrice || product.price).toFixed(2)}
           </p>
         </div>
       </div>

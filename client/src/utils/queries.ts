@@ -14,6 +14,7 @@ export const GET_ME = gql`
           description
           imageUrl
           price
+          salePrice
           stock
         }
         quantity
@@ -96,6 +97,7 @@ export const GET_CATEGORY = gql`
         description
         imageUrl
         price
+        salePrice
         stock
         reviews {
           _id
@@ -123,6 +125,7 @@ export const GET_CATEGORY_BY_NAME = gql`
         description
         imageUrl
         price
+        salePrice
         stock
         reviews {
           _id
